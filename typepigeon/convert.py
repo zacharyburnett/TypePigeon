@@ -1,7 +1,9 @@
+import ast
 from datetime import date, datetime, timedelta
 from enum import Enum, EnumMeta
 import json
 from pathlib import Path
+import sys
 from typing import Any, Collection, Iterable, Mapping, Union
 
 from dateutil.parser import parse as parse_date
@@ -58,7 +60,7 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
     """
 
     if isinstance(to_type, str):
-        to_type = eval(to_type)
+        to_type = getattr(sys.modules['builtins'], to_type)
 
     if isinstance(value, Enum):
         value = value.name
@@ -77,7 +79,7 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                     to_type = list(to_type)
                     if not isinstance(value, Iterable) or isinstance(value, str):
                         try:
-                            evaluated_value = eval(value)
+                            evaluated_value = ast.literal_eval(value)
                             assert isinstance(evaluated_value, Collection)
                             value = evaluated_value
                         except:
@@ -138,7 +140,7 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
             elif issubclass(to_type, int):
                 value = value.to_epsg()
         if issubclass(to_type, bool):
-            value = eval(f'{value}')
+            value = ast.literal_eval(f'{value}')
         elif issubclass(to_type, (datetime, date)):
             value = parse_date(value)
             if issubclass(to_type, date) and not issubclass(to_type, datetime):
@@ -172,14 +174,14 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                         value = wkb.loads(value)
                     except TypeError:
                         if isinstance(value, str):
-                            value = eval(value)
+                            value = ast.literal_eval(value)
                         try:
                             value = shapely_shape(value)
                         except:
                             value = to_type(value)
         elif issubclass(to_type, bool):
             try:
-                value = eval(f'{value}')
+                value = ast.literal_eval(f'{value}')
             except:
                 value = bool(value)
 
