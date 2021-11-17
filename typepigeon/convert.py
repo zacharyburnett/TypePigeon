@@ -135,7 +135,7 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                 value = value.to_epsg()
         if issubclass(to_type, bool):
             value = eval(f'{value}')
-        elif issubclass(to_type, datetime):
+        elif issubclass(to_type, (datetime, date)):
             value = parse_date(value)
             if issubclass(to_type, date) and not issubclass(to_type, datetime):
                 value = value.date()
