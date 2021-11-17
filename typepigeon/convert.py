@@ -67,6 +67,8 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
 
     if to_type is None:
         value = None
+    elif to_type is Any:
+        return value
     elif isinstance(to_type, Collection):
         collection_type = type(to_type)
         if collection_type is not EnumMeta:

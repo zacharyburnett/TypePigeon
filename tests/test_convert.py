@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from enum import Enum
 import os
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from pyproj import CRS
 import pytest
@@ -52,6 +52,7 @@ def test_convert_value():
 
     str_2 = convert_value(0.55, str)
     str_3 = convert_value(0.55, 'str')
+    str_4 = convert_value('a', Any)
 
     float_1 = convert_value('0.55', float)
     float_2 = convert_value('0.55', 'float')
@@ -110,6 +111,7 @@ def test_convert_value():
     assert str_1 == 'a'
     assert str_2 == '0.55'
     assert str_3 == '0.55'
+    assert str_4 == 'a'
 
     assert float_1 == 0.55
     assert float_2 == 0.55
