@@ -13,7 +13,7 @@ TypePigeon is a Python type converter focused on converting values between vario
 pip install typepigeon
 ```
 
-## Features:
+## Features
 
 - convert values directly from one Python type to another with `convert_value()`
 - convert values to JSON format with `convert_to_json()`
