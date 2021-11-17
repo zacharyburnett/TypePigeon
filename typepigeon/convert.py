@@ -77,7 +77,9 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                     to_type = list(to_type)
                     if not isinstance(value, Iterable) or isinstance(value, str):
                         try:
-                            value = eval(value)
+                            evaluated_value = eval(value)
+                            assert isinstance(evaluated_value, Collection)
+                            value = evaluated_value
                         except:
                             value = [value]
                     if len(to_type) == 1:
