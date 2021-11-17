@@ -5,6 +5,7 @@ from typing import Dict, List, Tuple
 
 from pyproj import CRS
 import pytest
+from shapely.geometry import LineString, MultiPoint, Point, Polygon
 
 from typepigeon.convert import convert_to_json, convert_value, guard_generic_alias
 
@@ -87,11 +88,21 @@ def test_convert_value():
     class_2 = convert_value('test_1', EnumerationTest)
 
     none_1 = convert_value(None, str)
+    none_2 = convert_value(5, None)
 
     crs_1 = convert_value(CRS.from_epsg(4326), str)
     crs_2 = convert_value(CRS.from_epsg(4326), int)
     crs_3 = convert_value(CRS.from_epsg(4326), dict)
     crs_4 = convert_value(4326, CRS)
+
+    geometry_1 = convert_value('[0, 1]', Point)
+    geometry_2 = convert_value((0, 1), Point)
+    geometry_3 = convert_value([(0, 1), (1, 1), (1, 0), (0, 0)], MultiPoint)
+    geometry_4 = convert_value([(0, 1), (1, 1), (1, 0), (0, 0)], LineString)
+    geometry_5 = convert_value([(0, 1), (1, 1), (1, 0), (0, 0)], Polygon)
+
+    with pytest.raises(NotImplementedError):
+        convert_value(Point(0, 1), MultiPoint)
 
     with pytest.raises((KeyError, ValueError)):
         convert_value(5, EnumerationTest)
@@ -126,6 +137,7 @@ def test_convert_value():
     assert class_2 == EnumerationTest.test_1
 
     assert none_1 is None
+    assert none_2 is None
 
     if os.name == 'nt':
         reference_crs_wkt = 'GEOGCRS["WGS 84",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],CS[ellipsoidal,2],AXIS["geodetic latitude (Lat)",north,ORDER[1],ANGLEUNIT["degree",0.0174532925199433]],AXIS["geodetic longitude (Lon)",east,ORDER[2],ANGLEUNIT["degree",0.0174532925199433]],USAGE[SCOPE["Horizontal component of 3D system."],AREA["World."],BBOX[-90,-180,90,180]],ID["EPSG",4326]]'
@@ -240,9 +252,15 @@ def test_convert_value():
         }
 
     assert crs_1 == reference_crs_wkt
-    assert crs_2 == 4326
     assert crs_3 == reference_crs_json
+    assert crs_2 == 4326
     assert crs_4 == CRS.from_epsg(4326)
+
+    assert geometry_1 == Point((0, 1))
+    assert geometry_2 == Point((0, 1))
+    assert geometry_3 == MultiPoint([(0, 1), (1, 1), (1, 0), (0, 0)])
+    assert geometry_4 == LineString([(0, 1), (1, 1), (1, 0), (0, 0)])
+    assert geometry_5 == Polygon([(0, 1), (1, 1), (1, 0), (0, 0)])
 
 
 def test_convert_values_to_json():
