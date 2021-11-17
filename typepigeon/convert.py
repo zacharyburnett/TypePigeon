@@ -27,9 +27,9 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
     0.55
     >>> convert_value(0.55, int)
     0
+
     >>> convert_value([1], str)
     '[1]'
-
     >>> convert_value([1, 2, '3', '4'], [int])
     [1, 2, 3, 4]
     >>> convert_value([1, 2, '3', '4'], (int, str, float, str))
@@ -74,7 +74,10 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                 if value is not None:
                     to_type = list(to_type)
                     if not isinstance(value, Iterable) or isinstance(value, str):
-                        value = [value]
+                        try:
+                            value = eval(value)
+                        except:
+                            value = [value]
                     if len(to_type) == 1:
                         to_type = [to_type[0] for _ in value]
                     elif len(to_type) == len(value):
@@ -283,7 +286,7 @@ def guard_generic_alias(generic_alias) -> type:
         else:
             members = ()
     elif isinstance(generic_alias, Collection) and not isinstance(
-        generic_alias, (EnumMeta, str)
+            generic_alias, (EnumMeta, str)
     ):
         type_class = generic_alias.__class__
         if issubclass(type_class, Mapping):

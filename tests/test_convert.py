@@ -64,6 +64,7 @@ def test_convert_value():
     list_2 = convert_value([1], str)
     list_3 = convert_value([1, 2, '3', '4'], [int])
     list_4 = convert_value([1, 2, '3', '4'], (int, str, float, str))
+    list_5 = convert_value('[1, 2, 3]', (int, str, float))
 
     with pytest.raises(ValueError):
         convert_value([1, 2, '3', '4'], (int, str))
@@ -108,6 +109,7 @@ def test_convert_value():
     assert list_2 == '[1]'
     assert list_3 == [1, 2, 3, 4]
     assert list_4 == (1, '2', 3.0, '4')
+    assert list_5 == (1, '2', 3.0)
 
     assert dict_1 == {'a': 2.5, 'b': 4.0, '3': 18.0}
 

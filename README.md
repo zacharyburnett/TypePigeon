@@ -12,3 +12,32 @@ TypePigeon is a Python type converter focused on converting values between vario
 ```shell
 pip install typepigeon
 ```
+
+## Usage
+
+With TypePigeon, you can convert simple values from one type to another:
+
+```python
+import typepigeon
+
+typepigeon.convert_value(0.55, str)
+# '0.55'
+
+typepigeon.convert_value(1, float)
+# 1.0
+
+typepigeon.convert_value([1], str)
+# '[1]'
+```
+
+Additionally, you can also cast values into a collection:
+
+```python
+import typepigeon
+
+typepigeon.convert_value([1, 2.0, '3'], [int])
+# [1, 2, 3]
+
+typepigeon.convert_value('[1, 2, 3]', (int, str, float))
+# [1, '2', 3.0]
+```
