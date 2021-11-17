@@ -13,6 +13,12 @@ TypePigeon is a Python type converter focused on converting values between vario
 pip install typepigeon
 ```
 
+## Features:
+
+- convert values directly from one Python type to another with `convert_value()`
+- convert values to JSON format with `convert_to_json()`
+- convert generic aliases (`List[str]`) to simple collection types (`[str]`) with `guard_generic_alias()`
+
 ## Usage
 
 With TypePigeon, you can convert simple values from one type to another:
