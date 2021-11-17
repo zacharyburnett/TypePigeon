@@ -1,11 +1,12 @@
 from datetime import datetime, timedelta
 from enum import Enum
 import os
+from typing import Dict, List, Tuple
 
 from pyproj import CRS
 import pytest
 
-from typepigeon.convert import convert_to_json, convert_value
+from typepigeon.convert import convert_to_json, convert_value, guard_generic_alias
 
 
 class ValueTest:
@@ -274,3 +275,33 @@ def test_convert_values_to_json():
 
     assert result_8 == [5, '6', {3: '2021-03-27 00:00:00'}]
     assert result_9 == {'test': [5, '6', {3: '2021-03-27 00:00:00'}]}
+
+
+def test_generic_alias():
+    # TODO this doesn't work on Python 3.8 because it is a generic ``~K`` and ``~T`` type
+    # simple_type_1 = guard_generic_alias(List)
+    # simple_type_2 = guard_generic_alias(Tuple)
+    # simple_type_3 = guard_generic_alias(Dict)
+
+    subscripted_type_1 = guard_generic_alias(List[str])
+    subscripted_type_2 = guard_generic_alias(Tuple[str, float])
+    subscripted_type_3 = guard_generic_alias(Dict[str, int])
+
+    mixed_type_1 = guard_generic_alias([str])
+    mixed_type_2 = guard_generic_alias([Tuple[float, List[int]]])
+    mixed_type_3 = guard_generic_alias({str: Tuple[str, int]})
+    mixed_type_4 = guard_generic_alias({str: (Dict[int, str], str)})
+
+    # TODO this doesn't work on Python 3.8 because it is a generic ``~K`` and ``~T`` type
+    # assert simple_type_1 == []
+    # assert simple_type_2 == ()
+    # assert simple_type_3 == {}
+
+    assert subscripted_type_1 == [str]
+    assert subscripted_type_2 == (str, float)
+    assert subscripted_type_3 == {str: int}
+
+    assert mixed_type_1 == [str]
+    assert mixed_type_2 == [(float, [int])]
+    assert mixed_type_3 == {str: (str, int)}
+    assert mixed_type_4 == {str: ({int: str}, str)}
