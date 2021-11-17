@@ -180,30 +180,30 @@ def test_convert_value():
                     'semi_major_axis': 6378137,
                     'inverse_flattening': 298.257223563,
                 },
-                'id': {'authority': 'EPSG', 'code': 6326, },
+                'id': {'authority': 'EPSG', 'code': 6326},
                 'members': [
                     {
-                        'id': {'authority': 'EPSG', 'code': 1166, },
+                        'id': {'authority': 'EPSG', 'code': 1166},
                         'name': 'World Geodetic System 1984 (Transit)',
                     },
                     {
-                        'id': {'authority': 'EPSG', 'code': 1152, },
+                        'id': {'authority': 'EPSG', 'code': 1152},
                         'name': 'World Geodetic System 1984 (G730)',
                     },
                     {
-                        'id': {'authority': 'EPSG', 'code': 1153, },
+                        'id': {'authority': 'EPSG', 'code': 1153},
                         'name': 'World Geodetic System 1984 (G873)',
                     },
                     {
-                        'id': {'authority': 'EPSG', 'code': 1154, },
+                        'id': {'authority': 'EPSG', 'code': 1154},
                         'name': 'World Geodetic System 1984 (G1150)',
                     },
                     {
-                        'id': {'authority': 'EPSG', 'code': 1155, },
+                        'id': {'authority': 'EPSG', 'code': 1155},
                         'name': 'World Geodetic System 1984 (G1674)',
                     },
                     {
-                        'id': {'authority': 'EPSG', 'code': 1156, },
+                        'id': {'authority': 'EPSG', 'code': 1156},
                         'name': 'World Geodetic System 1984 (G1762)',
                     },
                 ],
@@ -233,7 +233,7 @@ def test_convert_value():
                 'north_latitude': 90,
                 'east_longitude': 180,
             },
-            'id': {'authority': 'EPSG', 'code': 4326, },
+            'id': {'authority': 'EPSG', 'code': 4326},
         }
 
     assert crs_1 == reference_crs_wkt
@@ -253,8 +253,12 @@ def test_convert_values_to_json():
     result_6 = convert_to_json('test')
     result_7 = convert_to_json(datetime(2021, 3, 26))
 
-    result_8 = convert_to_json(convert_to_json([FloatTest(5), '6', {3: datetime(2021, 3, 27)}]))
-    result_9 = convert_to_json(convert_to_json({'test': [FloatTest(5), '6', {3: datetime(2021, 3, 27)}]}))
+    result_8 = convert_to_json(
+        convert_to_json([FloatTest(5), '6', {3: datetime(2021, 3, 27)}])
+    )
+    result_9 = convert_to_json(
+        convert_to_json({'test': [FloatTest(5), '6', {3: datetime(2021, 3, 27)}]})
+    )
 
     assert result_1 == 5
     assert result_2 == '5'
