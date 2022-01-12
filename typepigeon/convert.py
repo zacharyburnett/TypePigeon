@@ -83,7 +83,10 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                             assert isinstance(evaluated_value, Collection)
                             value = evaluated_value
                         except:
-                            value = [value]
+                            if isinstance(value, str) and ',' in value:
+                                value = value.split(',')
+                            else:
+                                value = [value]
                     if len(to_type) == 1:
                         to_type = [to_type[0] for _ in value]
                     elif len(to_type) == len(value):
@@ -292,7 +295,7 @@ def guard_generic_alias(generic_alias) -> type:
         else:
             members = ()
     elif isinstance(generic_alias, Collection) and not isinstance(
-        generic_alias, (EnumMeta, str)
+            generic_alias, (EnumMeta, str)
     ):
         type_class = generic_alias.__class__
         if issubclass(type_class, Mapping):
