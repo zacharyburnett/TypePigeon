@@ -3,7 +3,6 @@ from datetime import date, datetime, timedelta
 from enum import Enum, EnumMeta
 import json
 from pathlib import Path
-import re
 import sys
 from typing import Any, Collection, Iterable, Mapping, Union
 
@@ -85,7 +84,7 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                             value = evaluated_value
                         except:
                             if isinstance(value, str) and ',' in value:
-                                value = value.split(',')
+                                value = [entry.strip() for entry in value.split(',')]
                             else:
                                 value = [value]
                     if len(to_type) == 1:
@@ -163,8 +162,6 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                 components = {}
                 if len(parts) > 3:
                     components['days'] = parts.pop(0)
-                elif ' ' in value:
-                    components['days'] = re.findall(value.split()[0])[0]
                 if len(parts) > 2:
                     components['hours'] = parts.pop(0)
                 components['minutes'] = parts[0]
@@ -272,27 +269,32 @@ def guard_generic_alias(generic_alias) -> type:
 
     """
 
-    if hasattr(generic_alias, '__origin__'):
-        type_class = generic_alias.__origin__
-        if hasattr(generic_alias, '__args__'):
-            members = generic_alias.__args__
-            if issubclass(type_class, Mapping):
-                members = [members]
-        else:
-            members = ()
-    elif isinstance(generic_alias, Collection) and not isinstance(
-        generic_alias, (EnumMeta, str)
+    if (
+            hasattr(generic_alias, '__origin__')
+            or isinstance(generic_alias, Collection)
+            and not isinstance(generic_alias, (EnumMeta, str))
     ):
-        type_class = generic_alias.__class__
-        if issubclass(type_class, Mapping):
-            members = generic_alias.items()
-        else:
-            members = generic_alias
-    else:
-        return generic_alias
+        if hasattr(generic_alias, '__origin__'):
+            type_class = generic_alias.__origin__
+            if hasattr(generic_alias, '__args__'):
+                members = generic_alias.__args__
+                if issubclass(type_class, Mapping):
+                    members = [members]
+            else:
+                members = ()
+        elif isinstance(generic_alias, Collection) and not isinstance(
+                generic_alias, (EnumMeta, str)
+        ):
+            type_class = generic_alias.__class__
+            if issubclass(type_class, Mapping):
+                members = generic_alias.items()
+            else:
+                members = generic_alias
 
-    members = [guard_generic_alias(member) for member in members]
-    if type_class != generic_alias.__class__ or members != generic_alias:
-        return type_class(members)
+        members = [guard_generic_alias(member) for member in members]
+        if type_class != generic_alias.__class__ or members != generic_alias:
+            return type_class(members)
+        else:
+            return generic_alias
     else:
         return generic_alias

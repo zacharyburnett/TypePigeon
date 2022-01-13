@@ -88,7 +88,8 @@ def test_convert_collection():
     list_4 = convert_value([1, 2, '3', '4'], (int, str, float, str))
     list_5 = convert_value('[1, 2, 3]', (int, str, float))
     list_6 = convert_value('1, 2, 3', [int])
-    list_7 = convert_value(None, [])
+    list_7 = convert_value('test 1, test 2, test 3', [str])
+    list_8 = convert_value(None, [])
 
     with pytest.raises(ValueError):
         convert_value([1, 2, '3', '4'], (int, str))
@@ -105,7 +106,8 @@ def test_convert_collection():
     assert list_4 == (1, '2', 3.0, '4')
     assert list_5 == (1, '2', 3.0)
     assert list_6 == [1, 2, 3]
-    assert list_7 == []
+    assert list_7 == ['test 1', 'test 2', 'test 3']
+    assert list_8 == []
 
     assert dict_1 == {'a': 2.5, 'b': 4.0, '3': 18.0}
     assert dict_2 == {'a': 2.5, 'b': 4.0, '3': 18.0}
@@ -123,6 +125,9 @@ def test_convert_datetime():
     timedelta_5 = convert_value('13:20:15', timedelta)
     timedelta_6 = convert_value('01:13:20:15', timedelta)
     timedelta_7 = convert_value(15, timedelta)
+
+    with pytest.raises(ValueError):
+        convert_value('02:01:13:20:15', timedelta)
 
     assert datetime_1 == '2021-03-26 00:00:00'
     assert datetime_2 == datetime(2021, 3, 26)
