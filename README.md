@@ -64,7 +64,7 @@ from pyproj import CRS
 import typepigeon
 
 typepigeon.convert_value(datetime(2021, 3, 26), str)
-datetime(2021, 3, 26)
+'2021-03-26 00:00:00'
 
 typepigeon.convert_value('20210326', datetime)
 datetime(2021, 3, 26)

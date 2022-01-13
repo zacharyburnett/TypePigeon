@@ -41,7 +41,7 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
     {'a': 2.5, 'b': 4.0, '3': 18.0}
 
     >>> convert_value(datetime(2021, 3, 26), str)
-    datetime(2021, 3, 26)
+    '2021-03-26 00:00:00'
     >>> convert_value('20210326', datetime)
     datetime(2021, 3, 26)
     >>> convert_value('01:13:20:00', timedelta)
