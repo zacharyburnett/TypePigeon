@@ -7,7 +7,8 @@
 [![license](https://img.shields.io/github/license/zacharyburnett/TypePigeon)](https://creativecommons.org/share-your-work/public-domain/cc0)
 [![style](https://sourceforge.net/p/oitnb/code/ci/default/tree/_doc/_static/oitnb.svg?format=raw)](https://sourceforge.net/p/oitnb/code)
 
-TypePigeon is a Python type converter focused on converting values between various Python data types.
+TypePigeon is a Python type converter focused on converting values between
+various Python data types.
 
 ```shell
 pip install typepigeon
@@ -17,7 +18,8 @@ pip install typepigeon
 
 - convert values directly from one Python type to another with `convert_value()`
 - convert values to JSON format with `convert_to_json()`
-- convert generic aliases (`List[str]`) to simple collection types (`[str]`) with `guard_generic_alias()`
+- convert generic aliases (`List[str]`) to simple collection types (`[str]`)
+  with `guard_generic_alias()`
 
 ## Usage
 
