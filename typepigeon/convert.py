@@ -3,6 +3,7 @@ from datetime import date, datetime, timedelta
 from enum import Enum, EnumMeta
 import json
 from pathlib import Path
+import re
 import sys
 from typing import Any, Collection, Iterable, Mapping, Union
 
@@ -126,7 +127,7 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                     raise ValueError(
                         f'unrecognized entry "{value}"; must be one of {list(to_type)}'
                     )
-    elif not isinstance(value, to_type) and value is not None:
+    elif not type(value) is to_type and value is not None:
         if isinstance(value, timedelta):
             if issubclass(to_type, str):
                 hours, remainder = divmod(value, timedelta(hours=1))
@@ -143,28 +144,33 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
             elif issubclass(to_type, int):
                 value = value.to_epsg()
         if issubclass(to_type, bool):
-            value = ast.literal_eval(f'{value}')
+            try:
+                value = ast.literal_eval(f'{value}')
+            except ValueError:
+                value = bool(value)
         elif issubclass(to_type, (datetime, date)):
-            value = parse_date(value)
+            try:
+                value = parse_date(value)
+            except TypeError:
+                pass
             if issubclass(to_type, date) and not issubclass(to_type, datetime):
                 value = value.date()
         elif issubclass(to_type, timedelta):
-            try:
-                try:
-                    time = datetime.strptime(value, '%H:%M:%S')
-                    value = timedelta(
-                        hours=time.hour, minutes=time.minute, seconds=time.second
-                    )
-                except:
-                    parts = [float(part) for part in value.split(':')]
-                    if len(parts) > 3:
-                        days = parts.pop(0)
-                    else:
-                        days = 0
-                    value = timedelta(
-                        days=days, hours=parts[0], minutes=parts[1], seconds=parts[2]
-                    )
-            except:
+            if isinstance(value, str) and ':' in value:
+                parts = [float(part) for part in value.split(':')]
+                if len(parts) > 4:
+                    raise ValueError(f'unable to parse timedelta from input "{value}"')
+                components = {}
+                if len(parts) > 3:
+                    components['days'] = parts.pop(0)
+                elif ' ' in value:
+                    components['days'] = re.findall(value.split()[0])[0]
+                if len(parts) > 2:
+                    components['hours'] = parts.pop(0)
+                components['minutes'] = parts[0]
+                components['seconds'] = parts[1]
+                value = timedelta(**components)
+            else:
                 value = timedelta(seconds=float(value))
         elif to_type.__name__ in GEOMETRY_TYPES:
             try:
@@ -182,29 +188,9 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                             value = shapely_shape(value)
                         except:
                             value = to_type(value)
-        elif issubclass(to_type, bool):
-            try:
-                value = ast.literal_eval(f'{value}')
-            except:
-                value = bool(value)
 
         if not isinstance(value, to_type):
-            if isinstance(value, timedelta):
-                if issubclass(to_type, str):
-                    hours, remainder = divmod(value, timedelta(hours=1))
-                    minutes, remainder = divmod(remainder, timedelta(minutes=1))
-                    seconds = remainder / timedelta(seconds=1)
-                    value = f'{hours:02}:{minutes:02}:{seconds:04.3}'
-                else:
-                    value /= timedelta(seconds=1)
-            elif isinstance(value, CRS):
-                if issubclass(to_type, str):
-                    value = value.to_wkt()
-                elif issubclass(to_type, dict):
-                    value = value.to_json_dict()
-                elif issubclass(to_type, int):
-                    value = value.to_epsg()
-            elif type(value).__name__ in GEOMETRY_TYPES and to_type.__name__ in GEOMETRY_TYPES:
+            if type(value).__name__ in GEOMETRY_TYPES and to_type.__name__ in GEOMETRY_TYPES:
                 raise NotImplementedError('casting between geometric types not implemented')
             elif isinstance(value, (str, bytes)):
                 try:
