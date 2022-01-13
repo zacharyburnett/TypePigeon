@@ -1,0 +1,43 @@
+{
+  "$schema": "https://proj.org/schemas/v0.2/projjson.schema.json",
+  "area": "World.",
+  "bbox": {
+    "east_longitude": 180,
+    "north_latitude": 90,
+    "south_latitude": -90,
+    "west_longitude": -180
+  },
+  "coordinate_system": {
+    "axis": [
+      {
+        "abbreviation": "Lat",
+        "direction": "north",
+        "name": "Geodetic latitude",
+        "unit": "degree"
+      },
+      {
+        "abbreviation": "Lon",
+        "direction": "east",
+        "name": "Geodetic longitude",
+        "unit": "degree"
+      }
+    ],
+    "subtype": "ellipsoidal"
+  },
+  "datum": {
+    "ellipsoid": {
+      "inverse_flattening": 298.257223563,
+      "name": "WGS 84",
+      "semi_major_axis": 6378137
+    },
+    "name": "World Geodetic System 1984",
+    "type": "GeodeticReferenceFrame"
+  },
+  "id": {
+    "authority": "EPSG",
+    "code": 4326
+  },
+  "name": "WGS 84",
+  "scope": "Horizontal component of 3D system.",
+  "type": "GeographicCRS"
+}

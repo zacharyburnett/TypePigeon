@@ -1,12 +1,15 @@
 from datetime import datetime, timedelta
 from enum import Enum
+import json
 import os
+import sys
 from typing import Any, Dict, List, Tuple
 
 from pyproj import CRS
 import pytest
 from shapely.geometry import LineString, MultiPoint, Point, Polygon
 
+from tests import REFERENCE_DIRECTORY
 from typepigeon.convert import convert_to_json, convert_value, guard_generic_alias
 
 
@@ -45,6 +48,8 @@ class EnumerationTest(Enum):
 
 
 def test_convert_value():
+    reference_directory = REFERENCE_DIRECTORY / 'test_convert_value'
+
     str_1 = convert_value('a', str)
 
     with pytest.raises(ValueError):
@@ -142,120 +147,19 @@ def test_convert_value():
     assert none_2 is None
 
     if os.name == 'nt':
-        reference_crs_wkt = 'GEOGCRS["WGS 84",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],CS[ellipsoidal,2],AXIS["geodetic latitude (Lat)",north,ORDER[1],ANGLEUNIT["degree",0.0174532925199433]],AXIS["geodetic longitude (Lon)",east,ORDER[2],ANGLEUNIT["degree",0.0174532925199433]],USAGE[SCOPE["Horizontal component of 3D system."],AREA["World."],BBOX[-90,-180,90,180]],ID["EPSG",4326]]'
-        reference_crs_json = {
-            '$schema': 'https://proj.org/schemas/v0.2/projjson.schema.json',
-            'area': 'World.',
-            'bbox': {
-                'east_longitude': 180,
-                'north_latitude': 90,
-                'south_latitude': -90,
-                'west_longitude': -180,
-            },
-            'coordinate_system': {
-                'axis': [
-                    {
-                        'abbreviation': 'Lat',
-                        'direction': 'north',
-                        'name': 'Geodetic latitude',
-                        'unit': 'degree',
-                    },
-                    {
-                        'abbreviation': 'Lon',
-                        'direction': 'east',
-                        'name': 'Geodetic longitude',
-                        'unit': 'degree',
-                    },
-                ],
-                'subtype': 'ellipsoidal',
-            },
-            'datum': {
-                'ellipsoid': {
-                    'inverse_flattening': 298.257223563,
-                    'name': 'WGS 84',
-                    'semi_major_axis': 6378137,
-                },
-                'name': 'World Geodetic System 1984',
-                'type': 'GeodeticReferenceFrame',
-            },
-            'id': {'authority': 'EPSG', 'code': 4326},
-            'name': 'WGS 84',
-            'scope': 'Horizontal component of 3D system.',
-            'type': 'GeographicCRS',
-        }
+        wkt_filename = reference_directory / 'epsg4326_windows.txt'
+        json_filename = reference_directory / 'epsg4326_windows.json'
+    elif sys.version_info < (3, 8):
+        wkt_filename = reference_directory / 'epsg4326_python36.txt'
+        json_filename = reference_directory / 'epsg4326_python36.json'
     else:
-        reference_crs_wkt = 'GEOGCRS["WGS 84",ENSEMBLE["World Geodetic System 1984 ensemble",MEMBER["World Geodetic System 1984 (Transit)"],MEMBER["World Geodetic System 1984 (G730)"],MEMBER["World Geodetic System 1984 (G873)"],MEMBER["World Geodetic System 1984 (G1150)"],MEMBER["World Geodetic System 1984 (G1674)"],MEMBER["World Geodetic System 1984 (G1762)"],MEMBER["World Geodetic System 1984 (G2139)"],ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]],ENSEMBLEACCURACY[2.0]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],CS[ellipsoidal,2],AXIS["geodetic latitude (Lat)",north,ORDER[1],ANGLEUNIT["degree",0.0174532925199433]],AXIS["geodetic longitude (Lon)",east,ORDER[2],ANGLEUNIT["degree",0.0174532925199433]],USAGE[SCOPE["Horizontal component of 3D system."],AREA["World."],BBOX[-90,-180,90,180]],ID["EPSG",4326]]'
-        reference_crs_json = {
-            '$schema': 'https://proj.org/schemas/v0.4/projjson.schema.json',
-            'type': 'GeographicCRS',
-            'name': 'WGS 84',
-            'datum_ensemble': {
-                'accuracy': '2.0',
-                'name': 'World Geodetic System 1984 ensemble',
-                'ellipsoid': {
-                    'name': 'WGS 84',
-                    'semi_major_axis': 6378137,
-                    'inverse_flattening': 298.257223563,
-                },
-                'id': {'authority': 'EPSG', 'code': 6326},
-                'members': [
-                    {
-                        'id': {'authority': 'EPSG', 'code': 1166},
-                        'name': 'World Geodetic System 1984 (Transit)',
-                    },
-                    {
-                        'id': {'authority': 'EPSG', 'code': 1152},
-                        'name': 'World Geodetic System 1984 (G730)',
-                    },
-                    {
-                        'id': {'authority': 'EPSG', 'code': 1153},
-                        'name': 'World Geodetic System 1984 (G873)',
-                    },
-                    {
-                        'id': {'authority': 'EPSG', 'code': 1154},
-                        'name': 'World Geodetic System 1984 (G1150)',
-                    },
-                    {
-                        'id': {'authority': 'EPSG', 'code': 1155},
-                        'name': 'World Geodetic System 1984 (G1674)',
-                    },
-                    {
-                        'id': {'authority': 'EPSG', 'code': 1156},
-                        'name': 'World Geodetic System 1984 (G1762)',
-                    },
-                    {
-                        'id': {'authority': 'EPSG', 'code': 1309},
-                        'name': 'World Geodetic System 1984 (G2139)',
-                    },
-                ],
-            },
-            'coordinate_system': {
-                'subtype': 'ellipsoidal',
-                'axis': [
-                    {
-                        'name': 'Geodetic latitude',
-                        'abbreviation': 'Lat',
-                        'direction': 'north',
-                        'unit': 'degree',
-                    },
-                    {
-                        'name': 'Geodetic longitude',
-                        'abbreviation': 'Lon',
-                        'direction': 'east',
-                        'unit': 'degree',
-                    },
-                ],
-            },
-            'scope': 'Horizontal component of 3D system.',
-            'area': 'World.',
-            'bbox': {
-                'south_latitude': -90,
-                'west_longitude': -180,
-                'north_latitude': 90,
-                'east_longitude': 180,
-            },
-            'id': {'authority': 'EPSG', 'code': 4326},
-        }
+        wkt_filename = reference_directory / 'epsg4326.txt'
+        json_filename = reference_directory / 'epsg4326.json'
+
+    with open(wkt_filename) as wkt_file:
+        reference_crs_wkt = wkt_file.read()
+    with open(json_filename) as json_file:
+        reference_crs_json = json.load(json_file)
 
     assert crs_1 == reference_crs_wkt
     assert crs_3 == reference_crs_json
@@ -301,12 +205,8 @@ def test_convert_values_to_json():
     assert result_9 == {'test': [5, '6', {3: '2021-03-27 00:00:00'}]}
 
 
+@pytest.mark.skipif(sys.version_info < (3, 8), reason='requires Python 3.8 or greater')
 def test_generic_alias():
-    # TODO this doesn't work on Python 3.8 because it is a generic ``~K`` and ``~T`` type
-    # simple_type_1 = guard_generic_alias(List)
-    # simple_type_2 = guard_generic_alias(Tuple)
-    # simple_type_3 = guard_generic_alias(Dict)
-
     subscripted_type_1 = guard_generic_alias(List[str])
     subscripted_type_2 = guard_generic_alias(Tuple[str, float])
     subscripted_type_3 = guard_generic_alias(Dict[str, int])
@@ -315,11 +215,6 @@ def test_generic_alias():
     mixed_type_2 = guard_generic_alias([Tuple[float, List[int]]])
     mixed_type_3 = guard_generic_alias({str: Tuple[str, int]})
     mixed_type_4 = guard_generic_alias({str: (Dict[int, str], str)})
-
-    # TODO this doesn't work on Python 3.8 because it is a generic ``~K`` and ``~T`` type
-    # assert simple_type_1 == []
-    # assert simple_type_2 == ()
-    # assert simple_type_3 == {}
 
     assert subscripted_type_1 == [str]
     assert subscripted_type_2 == (str, float)
