@@ -43,7 +43,7 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
     >>> convert_value(datetime(2021, 3, 26), str)
     datetime(2021, 3, 26)
     >>> convert_value('20210326', datetime)
-    '2021-03-26 00:00:00'
+    datetime(2021, 3, 26)
     >>> convert_value('01:13:20:00', timedelta)
     timedelta(days=1, hours=13, minutes=20, seconds=0)
     >>> convert_value(timedelta(hours=1), str)
@@ -270,9 +270,9 @@ def guard_generic_alias(generic_alias) -> type:
     """
 
     if (
-            hasattr(generic_alias, '__origin__')
-            or isinstance(generic_alias, Collection)
-            and not isinstance(generic_alias, (EnumMeta, str))
+        hasattr(generic_alias, '__origin__')
+        or isinstance(generic_alias, Collection)
+        and not isinstance(generic_alias, (EnumMeta, str))
     ):
         if hasattr(generic_alias, '__origin__'):
             type_class = generic_alias.__origin__
@@ -283,7 +283,7 @@ def guard_generic_alias(generic_alias) -> type:
             else:
                 members = ()
         elif isinstance(generic_alias, Collection) and not isinstance(
-                generic_alias, (EnumMeta, str)
+            generic_alias, (EnumMeta, str)
         ):
             type_class = generic_alias.__class__
             if issubclass(type_class, Mapping):
