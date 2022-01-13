@@ -295,7 +295,7 @@ def guard_generic_alias(generic_alias) -> type:
         else:
             members = ()
     elif isinstance(generic_alias, Collection) and not isinstance(
-            generic_alias, (EnumMeta, str)
+        generic_alias, (EnumMeta, str)
     ):
         type_class = generic_alias.__class__
         if issubclass(type_class, Mapping):
