@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ windows-latest, ubuntu-latest ]
+        os: [ ubuntu-latest ]
         python-version: [ '3.6', '3.x' ]
     steps:
       - name: Checkout repository
@@ -27,10 +27,7 @@ jobs:
       - name: Install wheel
         run: pip install wheel
       - name: Install dependencies
-        run: |
-          pip install wheel
-          pip install flake8
-          pip install -e .[testing]
+        run: pip install -e ".[testing,development]"
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
