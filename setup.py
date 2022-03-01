@@ -46,14 +46,8 @@ print(f'using version {version}')
 metadata = config.read_configuration('setup.cfg')['metadata']
 
 setup(
-    name=metadata['name'],
+    **metadata,
     version=version,
-    author=metadata['author'],
-    author_email=metadata['author_email'],
-    description=metadata['description'],
-    long_description=metadata['long_description'],
-    long_description_content_type='text/markdown',
-    url=metadata['url'],
     packages=find_packages(),
     python_requires='>=3.6',
     setup_requires=['dunamai', 'setuptools>=41.2'],
