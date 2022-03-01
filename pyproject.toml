@@ -32,7 +32,10 @@ sphinx-rtd-theme = { version = "*", optional = true }
 requires = [
     "dunamai",
     "setuptools",
+<<<<<<< HEAD
     "toml",
+=======
+>>>>>>> b16c00a (change to `pyproject.toml`)
 ]
 build-backend = "setuptools.build_meta"
 
