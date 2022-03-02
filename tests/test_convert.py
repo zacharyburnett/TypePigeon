@@ -10,8 +10,12 @@ from pyproj import CRS
 import pytest
 from shapely.geometry import LineString, MultiPoint, Point, Polygon
 
-from tests import REFERENCE_DIRECTORY
 from typepigeon.convert import convert_to_json, convert_value, guard_generic_alias
+
+DATA_DIRECTORY = Path(__file__).parent.absolute().resolve() / 'data'
+INPUT_DIRECTORY = DATA_DIRECTORY / 'input'
+OUTPUT_DIRECTORY = DATA_DIRECTORY / 'output'
+REFERENCE_DIRECTORY = DATA_DIRECTORY / 'reference'
 
 
 class ValueTest:
