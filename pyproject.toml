@@ -8,6 +8,7 @@ authors = [
 license = "MIT"
 readme = "README.md"
 python = "^3.6"
+homepage = "https://typepigeon.readthedocs.io"
 repository = "https://github.com/zacharyburnett/TypePigeon"
 documentation = "https://typepigeon.readthedocs.io"
 

@@ -1,11 +1,16 @@
 import warnings
 
-from setuptools import config, find_packages, setup
+from setuptools import find_packages, setup
 
 try:
     from dunamai import Version
 except (ModuleNotFoundError, ImportError):
-    raise ModuleNotFoundError('pakcage "dunamai" not found')
+    raise ModuleNotFoundError('"dunamai" required for setup')
+
+try:
+    import toml
+except (ModuleNotFoundError, ImportError):
+    raise ModuleNotFoundError('"toml" required for setup')
 
 try:
     __version__ = Version.from_any_vcs().serialize()
