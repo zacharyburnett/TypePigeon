@@ -36,23 +36,13 @@ jobs:
   build_sdist:
     name: package source
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        python-version: [ '3.x' ]
     steps:
       - name: checkout repository
         uses: actions/checkout@v2
       - name: install Python
         uses: actions/setup-python@v2
-      - name: load cached `~/.local`
-        uses: actions/cache@v2
-        with:
-          path: ~/.local
-          key: ${{ runner.os }}-python${{ matrix.python-version }}-${{ hashFiles('pyproject.toml', 'setup.*') }}
-          restore-keys: ${{ runner.os }}-python${{ matrix.python-version }}-
       - name: install dependencies
-        run: pip install .
+        run: pip install dunamai
       - name: package source
         run: python setup.py sdist
       - name: save source package
