@@ -1,27 +1,3 @@
-[project]
-name = "typepigeon"
-version = "0.0.0"
-description = "Python type converter"
-authors = [
-    { name = "Zach Burnett", email = "zachary.r.burnett@gmail.com" },
-]
-license = "MIT"
-readme = "README.md"
-python = "^3.6"
-homepage = "https://typepigeon.readthedocs.io"
-repository = "https://github.com/zacharyburnett/TypePigeon"
-documentation = "https://typepigeon.readthedocs.io"
-
-[project.dependencies]
-python-dateutil = '*'
-pyproj = '*'
-shapely = '*'
-
-[project.optional-dependencies]
-testing = ['pytest', 'pytest-cov', 'pytest-xdist']
-development = ['flake8', 'isort', 'oitnb']
-documentation = ['m2r2', 'sphinx', 'sphinx-rtd-theme']
-
 [build-system]
 requires = [
     "dunamai",
