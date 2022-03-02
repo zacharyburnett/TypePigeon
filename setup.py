@@ -1,47 +1,17 @@
-import subprocess
-import sys
-from typing import List
-
-try:
-    from importlib import metadata as importlib_metadata
-except ImportError:  # for Python<3.8
-    subprocess.run(
-        f'{sys.executable} -m pip install importlib_metadata',
-        shell=True,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
-    import importlib_metadata
+import warnings
 
 from setuptools import config, find_packages, setup
 
-
-def installed_packages() -> List[str]:
-    installed_distributions = importlib_metadata.distributions()
-    return [
-        distribution.metadata['Name'].lower()
-        for distribution in installed_distributions
-        if distribution.metadata['Name'] is not None
-    ]
-
+try:
+    from dunamai import Version
+except (ModuleNotFoundError, ImportError):
+    raise ModuleNotFoundError('pakcage "dunamai" not found')
 
 try:
-    if 'dunamai' not in installed_packages():
-        subprocess.run(
-            f'{sys.executable} -m pip install dunamai',
-            shell=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-
-    from dunamai import Version
-
     version = Version.from_any_vcs().serialize()
-except (ModuleNotFoundError, RuntimeError) as error:
-    print(error)
+except RuntimeError as error:
+    warnings.warn(f'{error.__class__.__name__} - {error}')
     version = '0.0.0'
-
-print(f'using version {version}')
 
 metadata = config.read_configuration('setup.cfg')['metadata']
 
@@ -55,6 +25,6 @@ setup(
     extras_require={
         'testing': ['pytest', 'pytest-cov', 'pytest-xdist', 'wget'],
         'development': ['flake8', 'isort', 'oitnb'],
-        'documentation': ['dunamai', 'm2r2', 'sphinx', 'sphinx-rtd-theme'],
+        'documentation': ['m2r2', 'sphinx', 'sphinx-rtd-theme'],
     },
 )
