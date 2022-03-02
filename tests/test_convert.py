@@ -175,6 +175,9 @@ def test_convert_none():
     assert none_2 is None
 
 
+@pytest.mark.skipif(
+    sys.version_info < (3, 8), reason='mismatch in WKT strings in PROJ versions'
+)
 def test_convert_crs():
     reference_directory = REFERENCE_DIRECTORY / 'test_convert_crs'
 
