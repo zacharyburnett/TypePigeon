@@ -24,12 +24,12 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('setup.py') }}
+          key: ${{ runner.os }}-pip-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('pyproject.toml', 'setup.*') }}
           restore-keys: ${{ runner.os }}-pip-${{ steps.setup-python.outputs.python-version }}-
       - name: install dependencies
         run: pip install --upgrade pip setuptools wheel
       - name: build wheel
-        run: pip wheel . -w dist
+        run: pip wheel . -w dist --no-deps
       - name: save wheel
         uses: actions/upload-artifact@v2
         with:
