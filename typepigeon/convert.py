@@ -1,5 +1,5 @@
 import ast
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta
 from enum import Enum, EnumMeta
 import json
 from pathlib import Path
@@ -152,8 +152,11 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                 value = parse_date(value)
             except TypeError:
                 pass
-            if issubclass(to_type, date) and not issubclass(to_type, datetime):
+            if issubclass(to_type, datetime) and isinstance(value, date):
+                value = datetime.combine(value, time(0, 0, 0))
+            elif issubclass(to_type, date) and not issubclass(to_type, datetime):
                 value = value.date()
+
         elif issubclass(to_type, timedelta):
             if isinstance(value, str) and ':' in value:
                 parts = [float(part) for part in value.split(':')]

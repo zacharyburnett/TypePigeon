@@ -118,6 +118,10 @@ def test_convert_datetime():
     datetime_2 = convert_value('20210326', datetime)
     datetime_3 = convert_value(datetime(2021, 3, 26), date)
 
+    date_1 = convert_value(date(2021, 3, 26), str)
+    date_2 = convert_value('20210326', date)
+    date_3 = convert_value(datetime(2021, 3, 26), datetime)
+
     timedelta_1 = convert_value(timedelta(hours=13), str)
     timedelta_2 = convert_value(timedelta(hours=13), float)
     timedelta_3 = convert_value('00:00', timedelta)
@@ -132,6 +136,14 @@ def test_convert_datetime():
     assert datetime_1 == '2021-03-26 00:00:00'
     assert datetime_2 == datetime(2021, 3, 26)
     assert datetime_3 == date(2021, 3, 26)
+
+    assert isinstance(datetime_3, date) and not isinstance(datetime_3, datetime)
+
+    assert date_1 == '2021-03-26'
+    assert date_2 == date(2021, 3, 26)
+    assert date_3 == datetime(2021, 3, 26)
+
+    assert isinstance(date_3, datetime)
 
     assert timedelta_1 == '13:00:00.0'
     assert timedelta_2 == 13 * 3600
