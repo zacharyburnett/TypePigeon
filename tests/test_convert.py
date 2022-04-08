@@ -6,6 +6,7 @@ from pathlib import Path
 import sys
 from typing import Any, Dict, List, Tuple
 
+from dateutil.tz import tzlocal
 from pyproj import CRS
 import pytest
 from shapely.geometry import LineString, MultiPoint, Point, Polygon
@@ -117,6 +118,7 @@ def test_convert_datetime():
     datetime_1 = convert_value(datetime(2021, 3, 26, 0, 56), str)
     datetime_2 = convert_value('20210326T005600', datetime)
     datetime_3 = convert_value(datetime(2021, 3, 26), date)
+    datetime_4 = convert_value('2020-11-07 09:38:16 EST', datetime)
 
     date_1 = convert_value(date(2021, 3, 26), str)
     date_2 = convert_value('20210326T005600', date)
@@ -136,6 +138,7 @@ def test_convert_datetime():
     assert datetime_1 == '2021-03-26 00:56:00'
     assert datetime_2 == datetime(2021, 3, 26, 0, 56)
     assert datetime_3 == date(2021, 3, 26)
+    assert datetime_4 == datetime(2020, 11, 7, 9, 38, 16, tzinfo=tzlocal())
 
     assert isinstance(datetime_3, date) and not isinstance(datetime_3, datetime)
 
