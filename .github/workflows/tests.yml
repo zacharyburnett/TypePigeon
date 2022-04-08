@@ -19,13 +19,13 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-  test:
+  test_without_spatial:
     needs: lint
     name: test
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest ]
+        os: [ windows-latest, macos-latest ]
         python-version: [ '3.6', '3.x' ]
     steps:
       - name: clone repository
@@ -43,6 +43,31 @@ jobs:
       - name: install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: pip install ".[testing]"
+      - name: run tests
+        run: pytest --numprocesses auto
+  test_spatial:
+    needs: lint
+    name: test spatial packages
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: [ '3.6', '3.x' ]
+    steps:
+      - name: clone repository
+        uses: actions/checkout@v2
+      - name: install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: load cached Python installation
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.pythonLocation }}
+          key: test-spatial-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml', 'setup.*') }}
+      - name: install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: pip install ".[testing,spatial]"
       - name: run tests
         if: matrix.python-version != '3.x' || matrix.os != 'ubuntu-latest'
         run: pytest --numprocesses auto
