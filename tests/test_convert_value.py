@@ -76,7 +76,6 @@ def test_convert_datetime():
     datetime_1 = convert_value(datetime(2021, 3, 26, 0, 56), str)
     datetime_2 = convert_value('20210326T005600', datetime)
     datetime_3 = convert_value(datetime(2021, 3, 26), date)
-    datetime_4 = convert_value('2020-11-07 09:38:16 EST', datetime)
 
     date_1 = convert_value(date(2021, 3, 26), str)
     date_2 = convert_value('20210326T005600', date)
