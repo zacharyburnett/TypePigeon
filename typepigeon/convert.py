@@ -152,7 +152,11 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                 value = parse_date(value)
             except TypeError:
                 pass
-            if issubclass(to_type, datetime) and isinstance(value, date):
+            if (
+                issubclass(to_type, datetime)
+                and isinstance(value, date)
+                and not isinstance(value, datetime)
+            ):
                 value = datetime.combine(value, time(0, 0, 0))
             elif issubclass(to_type, date) and not issubclass(to_type, datetime):
                 value = value.date()

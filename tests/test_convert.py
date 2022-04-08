@@ -114,12 +114,12 @@ def test_convert_collection():
 
 
 def test_convert_datetime():
-    datetime_1 = convert_value(datetime(2021, 3, 26), str)
-    datetime_2 = convert_value('20210326', datetime)
+    datetime_1 = convert_value(datetime(2021, 3, 26, 0, 56), str)
+    datetime_2 = convert_value('20210326T005600', datetime)
     datetime_3 = convert_value(datetime(2021, 3, 26), date)
 
     date_1 = convert_value(date(2021, 3, 26), str)
-    date_2 = convert_value('20210326', date)
+    date_2 = convert_value('20210326T005600', date)
     date_3 = convert_value(datetime(2021, 3, 26), datetime)
 
     timedelta_1 = convert_value(timedelta(hours=13), str)
@@ -133,8 +133,8 @@ def test_convert_datetime():
     with pytest.raises(ValueError):
         convert_value('02:01:13:20:15', timedelta)
 
-    assert datetime_1 == '2021-03-26 00:00:00'
-    assert datetime_2 == datetime(2021, 3, 26)
+    assert datetime_1 == '2021-03-26 00:56:00'
+    assert datetime_2 == datetime(2021, 3, 26, 0, 56)
     assert datetime_3 == date(2021, 3, 26)
 
     assert isinstance(datetime_3, date) and not isinstance(datetime_3, datetime)
