@@ -48,7 +48,7 @@ jobs:
   test_spatial:
     needs: lint
     name: test with spatial conversions
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: [ '3.6', '3.x' ]
