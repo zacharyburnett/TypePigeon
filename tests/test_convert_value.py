@@ -96,7 +96,6 @@ def test_convert_datetime():
     assert datetime_1 == '2021-03-26 00:56:00'
     assert datetime_2 == datetime(2021, 3, 26, 0, 56)
     assert datetime_3 == date(2021, 3, 26)
-    assert datetime_4 == datetime(2020, 11, 7, 9, 38, 16, tzinfo=tzlocal())
 
     assert isinstance(datetime_3, date) and not isinstance(datetime_3, datetime)
 
