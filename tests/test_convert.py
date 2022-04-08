@@ -231,7 +231,7 @@ def test_convert_geometry():
     geometry_4 = convert_value([(0, 1), (1, 1), (1, 0), (0, 0)], LineString)
     geometry_5 = convert_value([(0, 1), (1, 1), (1, 0), (0, 0)], Polygon)
 
-    with pytest.raises(NotImplementedError):
+    with pytest.raises(TypeError):
         convert_value(Point(0, 1), MultiPoint)
 
     assert geometry_1 == Point((0, 1))
