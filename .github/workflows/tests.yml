@@ -69,14 +69,14 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: pip install ".[testing,spatial]"
       - name: run tests
-        if: matrix.python-version != '3.x' || matrix.os != 'ubuntu-latest'
+        if: matrix.python-version != '3.x'
         run: pytest --numprocesses auto
       - name: run tests with coverage
-        if: matrix.python-version == '3.x' && matrix.os == 'ubuntu-latest'
+        if: matrix.python-version == '3.x'
         run: pytest --numprocesses auto --cov . --cov-report xml:coverage.xml
       - name: upload coverage to Codecov
-        if: matrix.python-version == '3.x' && matrix.os == 'ubuntu-latest'
-        uses: codecov/codecov-action@v2.1.0
+        if: matrix.python-version == '3.x'
+        uses: codtest without timezoneecov/codecov-action@v2.1.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
