@@ -21,7 +21,7 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
   test_without_spatial:
     needs: lint
-    name: test
+    name: test without spatial conversions
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -44,10 +44,10 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: pip install ".[testing]"
       - name: run tests
-        run: pytest --numprocesses auto
+        run: pytest --numprocesses auto -m "not spatial"
   test_spatial:
     needs: lint
-    name: test spatial packages
+    name: test with spatial conversions
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
