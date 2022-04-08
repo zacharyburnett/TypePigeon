@@ -169,13 +169,14 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
 
                 value = parse_date(value)
             except (ModuleNotFoundError, TypeError):
-                if (
-                    issubclass(to_type, datetime)
-                    and isinstance(value, date)
-                    and not isinstance(value, datetime)
-                ):
-                    value = datetime.combine(value, time(0, 0, 0))
-            if issubclass(to_type, date) and not issubclass(to_type, datetime):
+                pass
+            if (
+                issubclass(to_type, datetime)
+                and isinstance(value, date)
+                and not isinstance(value, datetime)
+            ):
+                value = datetime.combine(value, time(0, 0, 0))
+            elif issubclass(to_type, date) and not issubclass(to_type, datetime):
                 value = value.date()
 
         elif issubclass(to_type, timedelta):

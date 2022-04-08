@@ -79,7 +79,7 @@ def test_convert_datetime():
 
     date_1 = convert_value(date(2021, 3, 26), str)
     date_2 = convert_value('20210326T005600', date)
-    date_3 = convert_value(datetime(2021, 3, 26), datetime)
+    date_3 = convert_value(date(2021, 3, 26), datetime)
 
     timedelta_1 = convert_value(timedelta(hours=13), str)
     timedelta_2 = convert_value(timedelta(hours=13), float)
