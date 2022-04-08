@@ -1,5 +1,7 @@
 from enum import Enum
 
+import pytest
+
 from typepigeon import convert_value
 
 
