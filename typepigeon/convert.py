@@ -1,16 +1,25 @@
 import ast
 from datetime import date, datetime, time, timedelta
 from enum import Enum, EnumMeta
+from functools import lru_cache
 import json
 from pathlib import Path
 import sys
-from typing import Any, Collection, Iterable, Mapping, Union
+from typing import Any, Collection, Iterable, List, Mapping, Union
 
-from dateutil.parser import parse as parse_date
-from pyproj import CRS
-from shapely import wkb, wkt
-from shapely.geometry import shape as shapely_shape
-from shapely.geometry.base import GEOMETRY_TYPES
+
+@lru_cache(maxsize=None)
+def installed_packages() -> List[str]:
+    try:
+        from importlib import metadata as importlib_metadata
+    except ImportError:  # for Python<3.8
+        import importlib_metadata
+    installed_distributions = importlib_metadata.distributions()
+    return [
+        distribution.metadata['Name'].lower()
+        for distribution in installed_distributions
+        if distribution.metadata['Name'] is not None
+    ]
 
 
 def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
@@ -105,8 +114,7 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                     value = collection_type()
             elif isinstance(value, str):
                 value = json.loads(value)
-            elif isinstance(value, CRS):
-                value = value.to_json_dict()
+
             elif isinstance(value, Mapping):
                 converted_items = []
                 key_to_type = list(to_type)[0]
@@ -116,6 +124,11 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                     value = convert_value(value, value_to_type)
                     converted_items.append((key, value))
                 value = collection_type(converted_items)
+            elif 'pyproj' in installed_packages():
+                from pyproj import CRS
+
+                if isinstance(value, CRS):
+                    value = value.to_json_dict()
         elif value is not None:
             try:
                 value = to_type[value]
@@ -135,13 +148,16 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                 value = f'{hours:02}:{minutes:02}:{seconds:04.3}'
             else:
                 value /= timedelta(seconds=1)
-        elif isinstance(value, CRS):
-            if issubclass(to_type, str):
-                value = value.to_wkt()
-            elif issubclass(to_type, dict):
-                value = value.to_json_dict()
-            elif issubclass(to_type, int):
-                value = value.to_epsg()
+        elif 'pyproj' in installed_packages():
+            from pyproj import CRS
+
+            if isinstance(value, CRS):
+                if issubclass(to_type, str):
+                    value = value.to_wkt()
+                elif issubclass(to_type, dict):
+                    value = value.to_json_dict()
+                elif issubclass(to_type, int):
+                    value = value.to_epsg()
         if issubclass(to_type, bool):
             try:
                 value = ast.literal_eval(f'{value}')
@@ -149,8 +165,10 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                 value = bool(value)
         elif issubclass(to_type, (datetime, date)):
             try:
+                from dateutil.parser import parse as parse_date
+
                 value = parse_date(value)
-            except TypeError:
+            except (ModuleNotFoundError, TypeError):
                 pass
             if (
                 issubclass(to_type, datetime)
@@ -176,30 +194,33 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                 value = timedelta(**components)
             else:
                 value = timedelta(seconds=float(value))
-        elif to_type.__name__ in GEOMETRY_TYPES:
-            try:
-                value = wkb.loads(value, hex=True)
-            except:
+        elif 'shapely' in installed_packages():
+            from shapely import wkb, wkt
+            from shapely.geometry import shape as shapely_shape
+            from shapely.geometry.base import GEOMETRY_TYPES
+
+            if to_type.__name__ in GEOMETRY_TYPES:
                 try:
-                    value = wkt.loads(value)
+                    value = wkb.loads(value, hex=True)
                 except:
                     try:
-                        value = wkb.loads(value)
-                    except TypeError:
-                        if isinstance(value, str):
-                            value = ast.literal_eval(value)
+                        value = wkt.loads(value)
+                    except:
                         try:
-                            value = shapely_shape(value)
-                        except:
-                            value = to_type(value)
+                            value = wkb.loads(value)
+                        except TypeError:
+                            if isinstance(value, str):
+                                value = ast.literal_eval(value)
+                            try:
+                                value = shapely_shape(value)
+                            except:
+                                value = to_type(value)
 
         if not isinstance(value, to_type):
-            if type(value).__name__ in GEOMETRY_TYPES and to_type.__name__ in GEOMETRY_TYPES:
-                raise NotImplementedError('casting between geometric types not implemented')
-            elif isinstance(value, (str, bytes)):
+            if isinstance(value, (str, bytes)):
                 try:
                     value = to_type.from_string(value)
-                except:
+                except AttributeError:
                     value = to_type(value)
             else:
                 value = to_type(value)
