@@ -57,7 +57,7 @@ jobs:
       - name: run tests
         run: pytest --numprocesses auto -m "not spatial"
   test_spatial:
-    needs: [ lint ]
+    needs: lint
     name: test spatial conversions
     runs-on: ${{ matrix.os }}
     strategy:
