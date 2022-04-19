@@ -38,3 +38,6 @@ spatial = ['pyproj', 'shapely']
 testing = ['pytest', 'pytest-cov', 'pytest-xdist']
 development = ['isort', 'oitnb']
 documentation = ['m2r2', 'sphinx', 'sphinx-rtd-theme']
+
+[tool.pytest.ini_options]
+markers = ['spatial']
