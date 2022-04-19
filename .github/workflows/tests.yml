@@ -78,7 +78,7 @@ jobs:
       - name: run tests
         run: pytest --numprocesses auto -m "spatial"
   test_with_coverage:
-    needs: [ lint, test_without_spatial, test_spatial ]
+    needs: [ lint, test_nonspatial, test_spatial ]
     name: test with coverage
     runs-on: ubuntu-latest
     steps:
