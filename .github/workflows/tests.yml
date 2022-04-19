@@ -53,16 +53,13 @@ jobs:
       - name: run tests
         run: pytest --numprocesses auto -m "not spatial"
   test_spatial:
-    needs: [ lint, test_without_spatial ]
-    name: test with spatial conversions
-    runs-on: ubuntu-latest
+    needs: [ lint ]
+    name: test spatial conversions
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
         python-version: [ '3.6', '3.7', '3.8', '3.9', '3.x' ]
-        exclude:
-          - os: macos-latest
-            python-version: '3.x'
     steps:
       - name: clone repository
         uses: actions/checkout@v2
@@ -75,17 +72,31 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ env.pythonLocation }}
-          key: test-spatial-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml', 'setup.*') }}
+          key: test-spatial-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}
       - name: install dependencies
         run: pip install ".[testing,spatial]"
       - name: run tests
-        if: matrix.python-version != '3.x'
-        run: pytest --numprocesses auto
+        run: pytest --numprocesses auto -m "spatial"
+  test_with_coverage:
+    needs: [ lint, test_without_spatial, test_spatial ]
+    name: test with coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone repository
+        uses: actions/checkout@v2
+      - name: install Python
+        uses: actions/setup-python@v2
+      - name: load cached Python installation
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.pythonLocation }}
+          key: test-spatial-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}
+      - name: install dependencies
+        run: pip install ".[testing,spatial]"
       - name: run tests with coverage
-        if: matrix.python-version == '3.x'
         run: pytest --numprocesses auto --cov . --cov-report xml:coverage.xml
       - name: upload coverage to Codecov
-        if: matrix.python-version == '3.x'
         uses: codecov/codecov-action@v2.1.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
