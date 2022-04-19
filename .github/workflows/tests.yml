@@ -27,9 +27,9 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: lint with oitnb
         run: oitnb . --check
-  test_without_spatial:
+  test_nonspatial:
     needs: lint
-    name: test without spatial conversions
+    name: test non-spatial conversions
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

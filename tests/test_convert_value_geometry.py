@@ -1,5 +1,4 @@
 import json
-import os
 import sys
 
 import pytest
@@ -9,6 +8,9 @@ from typepigeon import convert_value
 
 
 @pytest.mark.spatial
+@pytest.mark.skipif(
+    sys.version_info < (3, 8), reason='mismatch in WKT strings in PROJ versions'
+)
 def test_convert_crs():
     from pyproj import CRS
 
@@ -20,12 +22,8 @@ def test_convert_crs():
     crs_4 = convert_value(CRS.from_epsg(4326), {})
     crs_5 = convert_value(4326, CRS)
 
-    if sys.version_info >= (3, 8):
-        wkt_filename = reference_directory / 'epsg4326.txt'
-        json_filename = reference_directory / 'epsg4326.json'
-    else:
-        wkt_filename = reference_directory / 'epsg4326_python36.txt'
-        json_filename = reference_directory / 'epsg4326_python36.json'
+    wkt_filename = reference_directory / 'epsg4326.txt'
+    json_filename = reference_directory / 'epsg4326.json'
 
     with open(wkt_filename) as wkt_file:
         reference_crs_wkt = wkt_file.read()
