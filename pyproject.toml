@@ -19,9 +19,9 @@ build-backend = 'poetry.core.masonry.api'
 enable = true
 
 [tool.poetry.dependencies]
-python = '^3.6'
+python = '^3'
 python-dateutil = '*'
-importlib_metadata = '*'
+importlib_metadata = { version = '*', python = '<=3.7' }
 pyproj = { version = '*', optional = true }
 shapely = { version = '*', optional = true }
 isort = { version = '*', optional = true }
