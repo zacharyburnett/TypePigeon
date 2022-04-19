@@ -105,6 +105,8 @@ jobs:
         run: pip install ".[testing,spatial]"
       - name: run tests with coverage
         run: pytest --numprocesses auto --cov . --cov-report xml:coverage.xml
+      - name: show coverage report
+        run: coverage report
       - name: upload coverage to Codecov
         uses: codecov/codecov-action@v2.1.0
         with:
