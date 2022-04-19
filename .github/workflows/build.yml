@@ -13,6 +13,6 @@ jobs:
       - name: checkout repository
         uses: actions/checkout@v2
       - name: build package and publish to PyPI
-        uses: JRubics/poetry-publish@v1
+        uses: JRubics/poetry-publish@v1.10
         with:
           pypi_token: ${{ secrets.PYPI_TOKEN }}
