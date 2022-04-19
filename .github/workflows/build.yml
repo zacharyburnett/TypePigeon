@@ -12,7 +12,12 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@v2
-      - name: build package and publish to PyPI
-        uses: JRubics/poetry-publish@v1.10
+      - name: install Poetry
+        uses: abatilo/actions-poetry@v2.1.3
+      - name: build wheel and source
+        run: poetry build
+      - name: upload wheel and source
+        uses: pypa/gh-action-pypi-publish@v1.5.0
         with:
-          pypi_token: ${{ secrets.PYPI_TOKEN }}
+          user: __token__
+          password: ${{ secrets.PYPI_TOKEN }}
