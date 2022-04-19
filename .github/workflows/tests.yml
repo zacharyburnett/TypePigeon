@@ -11,14 +11,22 @@ jobs:
         uses: actions/checkout@v2
       - name: install Python
         uses: actions/setup-python@v2
-      - name: install flake8
-        run: pip install flake8
+      - name: load cached Python installation
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.pythonLocation }}
+          key: lint-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}
+      - name: install linters
+        run: pip install flake8 oitnb
       - name: lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      - name: lint with oitnb
+        run: oitnb . --check
   test_without_spatial:
     needs: lint
     name: test without spatial conversions
@@ -39,9 +47,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ env.pythonLocation }}
-          key: test-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml', 'setup.*') }}
+          key: test-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}
       - name: install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
         run: pip install ".[testing]"
       - name: run tests
         run: pytest --numprocesses auto -m "not spatial"
@@ -66,7 +73,6 @@ jobs:
           path: ${{ env.pythonLocation }}
           key: test-spatial-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml', 'setup.*') }}
       - name: install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
         run: pip install ".[testing,spatial]"
       - name: run tests
         if: matrix.python-version != '3.x'

@@ -36,5 +36,5 @@ sphinx-rtd-theme = { version = '*', optional = true }
 [tool.poetry.extras]
 spatial = ['pyproj', 'shapely']
 testing = ['pytest', 'pytest-cov', 'pytest-xdist']
-development = ['flake8', 'isort', 'oitnb']
+development = ['isort', 'oitnb']
 documentation = ['m2r2', 'sphinx', 'sphinx-rtd-theme']
