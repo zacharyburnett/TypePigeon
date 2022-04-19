@@ -1,5 +1,4 @@
 import json
-import os
 import sys
 
 import pytest
@@ -23,15 +22,8 @@ def test_convert_crs():
     crs_4 = convert_value(CRS.from_epsg(4326), {})
     crs_5 = convert_value(4326, CRS)
 
-    if os.name == 'nt':
-        wkt_filename = reference_directory / 'epsg4326_windows.txt'
-        json_filename = reference_directory / 'epsg4326_windows.json'
-    elif sys.version_info < (3, 8):
-        wkt_filename = reference_directory / 'epsg4326_python36.txt'
-        json_filename = reference_directory / 'epsg4326_python36.json'
-    else:
-        wkt_filename = reference_directory / 'epsg4326.txt'
-        json_filename = reference_directory / 'epsg4326.json'
+    wkt_filename = reference_directory / 'epsg4326.txt'
+    json_filename = reference_directory / 'epsg4326.json'
 
     with open(wkt_filename) as wkt_file:
         reference_crs_wkt = wkt_file.read()
