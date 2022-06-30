@@ -44,5 +44,5 @@ jobs:
         with:
           path: ${{ env.pythonLocation }}
           key: test-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}
-      - run: pip install ".[testing]"
+      - run: pip install ".[test]"
       - run: pytest -n auto

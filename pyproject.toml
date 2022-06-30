@@ -10,9 +10,9 @@ dynamic = ['version']
 
 [tool.poetry.extras]
 spatial = ['pyproj', 'shapely']
-testing = ['pytest', 'pytest-cov', 'pytest-xdist']
-development = ['isort', 'oitnb']
-documentation = ['m2r2', 'sphinx', 'sphinx-rtd-theme']
+test = ['pytest', 'pytest-cov', 'pytest-xdist']
+dev = ['isort', 'oitnb']
+docs = ['m2r2', 'sphinx', 'sphinx-rtd-theme']
 
 [project.urls]
 repository = 'https://github.com/zacharyburnett/TypePigeon.git'

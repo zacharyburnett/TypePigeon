@@ -51,7 +51,7 @@ jobs:
         with:
           path: ${{ env.pythonLocation }}
           key: test-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}
-      - run: pip install ".[testing]"
+      - run: pip install ".[test]"
       - run: pytest -n auto -m "not spatial"
   test_spatial:
     needs: [ lint ]
@@ -74,7 +74,7 @@ jobs:
         with:
           path: ${{ env.pythonLocation }}
           key: test-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}
-      - run: pip install ".[testing,spatial]"
+      - run: pip install ".[test,spatial]"
       - run: pytest -n auto -m "spatial"
   test_with_coverage:
     needs: [ lint, test_nonspatial, test_spatial ]
@@ -90,7 +90,7 @@ jobs:
         with:
           path: ${{ env.pythonLocation }}
           key: test-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}
-      - run: pip install ".[testing,spatial]"
+      - run: pip install ".[test,spatial]"
       - run: pytest --cov . --cov-report xml:coverage.xml
       - run: coverage report
       - uses: codecov/codecov-action@master
