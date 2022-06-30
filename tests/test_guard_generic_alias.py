@@ -6,7 +6,7 @@ import pytest
 from typepigeon import guard_generic_alias
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason='requires Python 3.8 or greater')
+@pytest.mark.skipif(sys.version_info < (3, 8), reason="requires Python 3.8 or greater")
 def test_generic_alias():
     subscripted_type_1 = guard_generic_alias(List[str])
     subscripted_type_2 = guard_generic_alias(Tuple[str, float])
