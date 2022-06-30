@@ -20,7 +20,7 @@ documentation = 'https://typepigeon.readthedocs.io'
 
 [build-system]
 requires = [
-    'setuptools >=61.0',
+    'setuptools',
     'setuptools_scm[toml] >=3.4',
     'wheel',
 ]
