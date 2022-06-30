@@ -8,7 +8,7 @@ license = { file = 'LICENSE' }
 dependencies = ['python-dateutil']
 dynamic = ['version']
 
-[tool.poetry.extras]
+[project.optional-dependencies]
 spatial = ['pyproj', 'shapely']
 test = ['pytest', 'pytest-cov', 'pytest-xdist']
 dev = ['isort', 'oitnb']
