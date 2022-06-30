@@ -3,7 +3,7 @@ name = 'packetraven'
 description = 'Telemetry dashboard for APRS packets from TNC, https://aprs.fi, and PostGIS'
 authors = [{ name = 'Zach Burnett', email = 'zachary.r.burnett@gmail.com' }]
 readme = 'README.md'
-requires-python = '>=3.6'
+requires-python = '>=3.7'
 license = { file = 'LICENSE' }
 dependencies = ['python-dateutil']
 dynamic = ['version']
