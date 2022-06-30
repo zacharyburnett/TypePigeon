@@ -1,6 +1,6 @@
 [project]
-name = 'packetraven'
-description = 'Telemetry dashboard for APRS packets from TNC, https://aprs.fi, and PostGIS'
+name = 'typepigeon'
+description = 'Python type converter'
 authors = [{ name = 'Zach Burnett', email = 'zachary.r.burnett@gmail.com' }]
 readme = 'README.md'
 requires-python = '>=3.7'
