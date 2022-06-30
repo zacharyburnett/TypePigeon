@@ -1,37 +1,12 @@
-[tool.poetry]
-name = 'typepigeon'
-version = '0.0.0'
-description = 'Python type converter'
-authors = ['Zach Burnett <zachary.r.burnett@gmail.com>']
-license = 'GPL-3.0-or-later'
+[project]
+name = 'packetraven'
+description = 'Telemetry dashboard for APRS packets from TNC, https://aprs.fi, and PostGIS'
+authors = [{ name = 'Zach Burnett', email = 'zachary.r.burnett@gmail.com' }]
 readme = 'README.md'
-repository = 'https://github.com/zacharyburnett/TypePigeon.git'
-documentation = 'https://typepigeon.readthedocs.io'
-
-[build-system]
-requires = [
-    'poetry-core>=1.0.0',
-    'poetry-dynamic-versioning',
-]
-build-backend = 'poetry.core.masonry.api'
-
-[tool.poetry-dynamic-versioning]
-enable = true
-
-[tool.poetry.dependencies]
-python = '^3.6'
-python-dateutil = '*'
-importlib_metadata = { version = '*', python = '<=3.7' }
-pyproj = { version = '*', optional = true }
-shapely = { version = '*', optional = true }
-isort = { version = '*', optional = true }
-oitnb = { version = '*', optional = true }
-pytest = { version = '*', optional = true }
-pytest-cov = { version = '*', optional = true }
-pytest-xdist = { version = '*', optional = true }
-m2r2 = { version = '*', optional = true }
-sphinx = { version = '*', optional = true }
-sphinx-rtd-theme = { version = '*', optional = true }
+requires-python = '>=3.6'
+license = { file = 'LICENSE' }
+dependencies = ['python-dateutil']
+dynamic = ['version']
 
 [tool.poetry.extras]
 spatial = ['pyproj', 'shapely']
@@ -39,5 +14,16 @@ testing = ['pytest', 'pytest-cov', 'pytest-xdist']
 development = ['isort', 'oitnb']
 documentation = ['m2r2', 'sphinx', 'sphinx-rtd-theme']
 
-[tool.pytest.ini_options]
-markers = ['spatial']
+[project.urls]
+repository = 'https://github.com/zacharyburnett/TypePigeon.git'
+documentation = 'https://typepigeon.readthedocs.io'
+
+[build-system]
+requires = [
+    'setuptools >=61',
+    'setuptools_scm[toml] >=3.4',
+    'wheel',
+]
+build-backend = 'setuptools.build_meta'
+
+[tool.setuptools_scm]
