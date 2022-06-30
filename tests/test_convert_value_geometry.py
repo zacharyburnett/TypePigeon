@@ -9,12 +9,12 @@ from typepigeon import convert_value
 
 @pytest.mark.spatial
 @pytest.mark.skipif(
-    sys.version_info < (3, 8), reason='mismatch in WKT strings in PROJ versions'
+    sys.version_info < (3, 8), reason="mismatch in WKT strings in PROJ versions"
 )
 def test_convert_crs():
     from pyproj import CRS
 
-    reference_directory = REFERENCE_DIRECTORY / 'test_convert_crs'
+    reference_directory = REFERENCE_DIRECTORY / "test_convert_crs"
 
     crs_1 = convert_value(CRS.from_epsg(4326), str)
     crs_2 = convert_value(CRS.from_epsg(4326), int)
@@ -22,8 +22,8 @@ def test_convert_crs():
     crs_4 = convert_value(CRS.from_epsg(4326), {})
     crs_5 = convert_value(4326, CRS)
 
-    wkt_filename = reference_directory / 'epsg4326.txt'
-    json_filename = reference_directory / 'epsg4326.json'
+    wkt_filename = reference_directory / "epsg4326.txt"
+    json_filename = reference_directory / "epsg4326.json"
 
     with open(wkt_filename) as wkt_file:
         reference_crs_wkt = wkt_file.read()
@@ -41,7 +41,7 @@ def test_convert_crs():
 def test_convert_geometry():
     from shapely.geometry import LineString, MultiPoint, Point, Polygon
 
-    geometry_1 = convert_value('[0, 1]', Point)
+    geometry_1 = convert_value("[0, 1]", Point)
     geometry_2 = convert_value((0, 1), Point)
     geometry_3 = convert_value([(0, 1), (1, 1), (1, 0), (0, 0)], MultiPoint)
     geometry_4 = convert_value([(0, 1), (1, 1), (1, 0), (0, 0)], LineString)

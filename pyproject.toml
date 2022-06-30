@@ -11,7 +11,6 @@ dynamic = ['version']
 [project.optional-dependencies]
 spatial = ['pyproj', 'shapely']
 test = ['pytest', 'pytest-cov', 'pytest-xdist']
-dev = ['isort', 'oitnb']
 docs = ['m2r2', 'sphinx', 'sphinx-rtd-theme']
 
 [project.urls]

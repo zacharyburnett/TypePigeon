@@ -16,9 +16,9 @@ def installed_packages() -> List[str]:
         import importlib_metadata
     installed_distributions = importlib_metadata.distributions()
     return [
-        distribution.metadata['Name'].lower()
+        distribution.metadata["Name"].lower()
         for distribution in installed_distributions
-        if distribution.metadata['Name'] is not None
+        if distribution.metadata["Name"] is not None
     ]
 
 
@@ -69,7 +69,7 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
     """
 
     if isinstance(to_type, str):
-        to_type = getattr(sys.modules['builtins'], to_type)
+        to_type = getattr(sys.modules["builtins"], to_type)
 
     if isinstance(value, Enum):
         value = value.name
@@ -92,8 +92,8 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                             assert isinstance(evaluated_value, Collection)
                             value = evaluated_value
                         except:
-                            if isinstance(value, str) and ',' in value:
-                                value = [entry.strip() for entry in value.split(',')]
+                            if isinstance(value, str) and "," in value:
+                                value = [entry.strip() for entry in value.split(",")]
                             else:
                                 value = [value]
                     if len(to_type) == 1:
@@ -102,9 +102,9 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                         to_type = to_type[: len(value)]
                     else:
                         raise ValueError(
-                            f'unable to convert list of values of length {len(value)} '
-                            f'to list of types of length {len(to_type)}: '
-                            f'{value} -/> {to_type}'
+                            f"unable to convert list of values of length {len(value)} "
+                            f"to list of types of length {len(to_type)}: "
+                            f"{value} -/> {to_type}"
                         )
                     value = collection_type(
                         convert_value(value[index], current_type)
@@ -124,7 +124,7 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                     value = convert_value(value, value_to_type)
                     converted_items.append((key, value))
                 value = collection_type(converted_items)
-            elif 'pyproj' in installed_packages():
+            elif "pyproj" in installed_packages():
                 from pyproj import CRS
 
                 if isinstance(value, CRS):
@@ -145,10 +145,10 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                 hours, remainder = divmod(value, timedelta(hours=1))
                 minutes, remainder = divmod(remainder, timedelta(minutes=1))
                 seconds = remainder / timedelta(seconds=1)
-                value = f'{hours:02}:{minutes:02}:{seconds:04.3}'
+                value = f"{hours:02}:{minutes:02}:{seconds:04.3}"
             else:
                 value /= timedelta(seconds=1)
-        elif 'pyproj' in installed_packages():
+        elif "pyproj" in installed_packages():
             from pyproj import CRS
 
             if isinstance(value, CRS):
@@ -160,7 +160,7 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                     value = value.to_epsg()
         if issubclass(to_type, bool):
             try:
-                value = ast.literal_eval(f'{value}')
+                value = ast.literal_eval(f"{value}")
             except ValueError:
                 value = bool(value)
         elif issubclass(to_type, (datetime, date)):
@@ -180,21 +180,21 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                 value = value.date()
 
         elif issubclass(to_type, timedelta):
-            if isinstance(value, str) and ':' in value:
-                parts = [float(part) for part in value.split(':')]
+            if isinstance(value, str) and ":" in value:
+                parts = [float(part) for part in value.split(":")]
                 if len(parts) > 4:
                     raise ValueError(f'unable to parse timedelta from input "{value}"')
                 components = {}
                 if len(parts) > 3:
-                    components['days'] = parts.pop(0)
+                    components["days"] = parts.pop(0)
                 if len(parts) > 2:
-                    components['hours'] = parts.pop(0)
-                components['minutes'] = parts[0]
-                components['seconds'] = parts[1]
+                    components["hours"] = parts.pop(0)
+                components["minutes"] = parts[0]
+                components["seconds"] = parts[1]
                 value = timedelta(**components)
             else:
                 value = timedelta(seconds=float(value))
-        elif 'shapely' in installed_packages():
+        elif "shapely" in installed_packages():
             from shapely import wkb, wkt
             from shapely.geometry import shape as shapely_shape
             from shapely.geometry.base import GEOMETRY_TYPES
@@ -298,13 +298,13 @@ def guard_generic_alias(generic_alias) -> type:
     """
 
     if (
-        hasattr(generic_alias, '__origin__')
+        hasattr(generic_alias, "__origin__")
         or isinstance(generic_alias, Collection)
         and not isinstance(generic_alias, (EnumMeta, str))
     ):
-        if hasattr(generic_alias, '__origin__'):
+        if hasattr(generic_alias, "__origin__"):
             type_class = generic_alias.__origin__
-            if hasattr(generic_alias, '__args__'):
+            if hasattr(generic_alias, "__args__"):
                 members = generic_alias.__args__
                 if issubclass(type_class, Mapping):
                     members = [members]
