@@ -139,7 +139,7 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                     raise ValueError(
                         f'unrecognized entry "{value}"; must be one of {list(to_type)}'
                     )
-    elif not type(value) is to_type and value is not None:
+    elif type(value) is not to_type and value is not None:
         if isinstance(value, timedelta):
             if issubclass(to_type, str):
                 hours, remainder = divmod(value, timedelta(hours=1))
@@ -171,9 +171,9 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
             except (ModuleNotFoundError, TypeError):
                 pass
             if (
-                issubclass(to_type, datetime)
-                and isinstance(value, date)
-                and not isinstance(value, datetime)
+                    issubclass(to_type, datetime)
+                    and isinstance(value, date)
+                    and not isinstance(value, datetime)
             ):
                 value = datetime.combine(value, time(0, 0, 0))
             elif issubclass(to_type, date) and not issubclass(to_type, datetime):
@@ -298,9 +298,9 @@ def guard_generic_alias(generic_alias) -> type:
     """
 
     if (
-        hasattr(generic_alias, "__origin__")
-        or isinstance(generic_alias, Collection)
-        and not isinstance(generic_alias, (EnumMeta, str))
+            hasattr(generic_alias, "__origin__")
+            or isinstance(generic_alias, Collection)
+            and not isinstance(generic_alias, (EnumMeta, str))
     ):
         if hasattr(generic_alias, "__origin__"):
             type_class = generic_alias.__origin__
@@ -311,7 +311,7 @@ def guard_generic_alias(generic_alias) -> type:
             else:
                 members = ()
         elif isinstance(generic_alias, Collection) and not isinstance(
-            generic_alias, (EnumMeta, str)
+                generic_alias, (EnumMeta, str)
         ):
             type_class = generic_alias.__class__
             if issubclass(type_class, Mapping):

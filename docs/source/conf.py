@@ -14,8 +14,8 @@ from os import PathLike
 from pathlib import Path
 import sys
 
+import tomli
 from dunamai import Version
-from setuptools import config
 
 
 def repository_root(path: PathLike = None) -> Path:
@@ -34,10 +34,11 @@ def repository_root(path: PathLike = None) -> Path:
 sys.path.insert(0, str(repository_root()))
 
 # -- Project information -----------------------------------------------------
-metadata = config.read_configuration("../../setup.cfg")["metadata"]
+with open(Path(__file__).parent.parent.parent / 'pyproject.toml', 'rb') as configuration_file:
+    metadata = tomli.load(configuration_file)['project']
 
 project = metadata["name"]
-author = metadata["author"]
+author = metadata["authors"][0]["name"]
 copyright = f"2021, {author}"
 
 # The full version, including alpha/beta/rc tags

@@ -13,88 +13,91 @@ on:
       - main
 
 jobs:
-  lint:
-    name: lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@main
-      - uses: actions/setup-python@main
-        with:
-          python-version: '3.x'
-      - uses: actions/cache@main
-        id: cache
-        with:
-          path: ${{ env.pythonLocation }}
-          key: lint-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}
-      - run: pip install flake8 black
-      - run: |
-          # stop the build if there are Python syntax errors or undefined names
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-      - run: black . --check
-  test_nonspatial:
-    needs: [ lint ]
-    name: test non-spatial conversions
+  check:
+    name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
-        python: [ '3.7', '3.8', '3.9', '3.10' ]
-    steps:
-      - uses: actions/checkout@main
-      - uses: actions/setup-python@main
-        with:
-          python-version: ${{ matrix.python }}
-      - uses: actions/cache@main
-        id: cache
-        with:
-          path: ${{ env.pythonLocation }}
-          key: test-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}
-      - run: pip install ".[test]"
-      - run: pytest -n auto -m "not spatial"
-  test_spatial:
-    needs: [ lint ]
-    name: test spatial conversions
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
+        toxenv: [ check-style ]
+        python-version: [ '3.x' ]
         os: [ ubuntu-latest ]
-        python: [ '3.7', '3.8', '3.9', '3.10' ]
-        exclude:
-          - os: macos-latest
-            python: '3.10'
     steps:
-      - uses: actions/checkout@main
-      - uses: actions/setup-python@main
+      - uses: actions/checkout@v3
         with:
-          python-version: ${{ matrix.python }}
-      - uses: actions/cache@main
-        id: cache
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
         with:
-          path: ${{ env.pythonLocation }}
-          key: test-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}
-      - run: pip install ".[test,spatial]"
-      - run: pytest -n auto -m "spatial"
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: 'pyproject.toml'
+      - run: pip install tox
+      - run: tox -e ${{ matrix.toxenv }}
+  test:
+    name: ${{ matrix.toxenv }} (Python ${{ matrix.python-version }}, ${{ matrix.os }})
+    needs: [ check ]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        toxenv: [ test-xdist, test-spatial-xdist ]
+        python-version: [ '3.8', '3.9', '3.10', '3.11' ]
+        os: [ ubuntu-latest, macos-latest ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: 'pyproject.toml'
+      - run: pip install tox
+      - run: tox -e ${{ matrix.toxenv }}
   test_with_coverage:
-    needs: [ lint, test_nonspatial, test_spatial ]
-    name: test with coverage
-    runs-on: ubuntu-latest
+    name: ${{ matrix.toxenv }} (Python ${{ matrix.python-version }}, ${{ matrix.os }})
+    needs: [ test ]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        toxenv: [ test-cov ]
+        python-version: [ '3.x' ]
+        os: [ ubuntu-latest ]
     steps:
-      - uses: actions/checkout@main
-      - uses: actions/setup-python@main
+      - uses: actions/checkout@v3
         with:
-          python-version: '3.x'
-      - uses: actions/cache@main
-        id: cache
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
         with:
-          path: ${{ env.pythonLocation }}
-          key: test-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml') }}
-      - run: pip install ".[test,spatial]"
-      - run: pytest --cov . --cov-report xml:coverage.xml
-      - run: coverage report
-      - uses: codecov/codecov-action@master
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: 'pyproject.toml'
+      - run: pip install tox
+      - run: tox -e ${{ matrix.toxenv }}
+      - if: ${{ contains(matrix.toxenv,'-cov') }}
+        uses: codecov/codecov-action@v3
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: coverage.xml
+          file: ./coverage.xml
+          flags: unit
           fail_ci_if_error: true
+  build:
+    name: ${{ matrix.toxenv }} (Python ${{ matrix.python-version }}, ${{ matrix.os }})
+    needs: [ test ]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        toxenv: [ build-twine ]
+        python-version: [ '3.8', '3.9', '3.10', '3.11' ]
+        os: [ ubuntu-latest, macos-latest ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: 'pyproject.toml'
+      - run: pip install tox
+      - run: tox -e ${{ matrix.toxenv }}

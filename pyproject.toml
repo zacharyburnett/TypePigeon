@@ -11,7 +11,7 @@ dynamic = ['version']
 [project.optional-dependencies]
 spatial = ['pyproj', 'shapely']
 test = ['pytest', 'pytest-cov', 'pytest-xdist']
-docs = ['m2r2', 'sphinx', 'sphinx-rtd-theme']
+docs = ['dunamai', 'm2r2', 'sphinx', 'sphinx-rtd-theme']
 
 [project.urls]
 repository = 'https://github.com/zacharyburnett/TypePigeon.git'
@@ -29,3 +29,6 @@ build-backend = 'setuptools.build_meta'
 
 [tool.pytest.ini_options]
 markers = ['spatial']
+
+[tool.ruff]
+ignore = ['E501', 'E722']

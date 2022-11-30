@@ -119,9 +119,9 @@ def test_convert_bool():
     bool_2 = convert_value("test", bool)
     bool_3 = convert_value("False", bool)
 
-    assert bool_1 == False
-    assert bool_2 == True
-    assert bool_3 == False
+    assert bool_1 is False
+    assert bool_2 is True
+    assert bool_3 is False
 
 
 def test_convert_none():
