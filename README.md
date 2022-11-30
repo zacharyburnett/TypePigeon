@@ -5,7 +5,7 @@
 [![build](https://github.com/zacharyburnett/TypePigeon/workflows/build/badge.svg)](https://github.com/zacharyburnett/TypePigeon/actions?query=workflow%3Abuild)
 [![version](https://img.shields.io/pypi/v/TypePigeon)](https://pypi.org/project/TypePigeon)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/typepigeon/badges/version.svg)](https://anaconda.org/conda-forge/typepigeon)
-[![license](https://img.shields.io/github/license/zacharyburnett/TypePigeon)](https://creativecommons.org/share-your-work/public-domain/cc0)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 TypePigeon is a Python type converter focused on converting values between
