@@ -37,4 +37,8 @@ norecursedirs = [
 ]
 
 [tool.ruff]
-ignore = ['E501', 'E722']
+ignore = [
+    'E501', # Line too long
+    'E722', # Do not use bare `except`
+    'F541', # f-string without any placeholders
+]
