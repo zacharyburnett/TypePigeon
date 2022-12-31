@@ -7,6 +7,12 @@ from pathlib import Path
 import sys
 from typing import Any, Collection, Iterable, List, Mapping, Union
 
+__all__ = [
+    'convert_value',
+    'convert_to_json',
+    'guard_generic_alias',
+]
+
 
 @lru_cache(maxsize=None)
 def installed_packages() -> List[str]:
@@ -198,6 +204,7 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
             from shapely import wkb, wkt
             from shapely.geometry import shape as shapely_shape
             from shapely.geometry.base import GEOMETRY_TYPES
+            from shapely.errors import GEOSException
 
             if to_type.__name__ in GEOMETRY_TYPES:
                 try:
@@ -208,7 +215,7 @@ def convert_value(value: Any, to_type: Union[type, Collection[type]]) -> Any:
                     except:
                         try:
                             value = wkb.loads(value)
-                        except TypeError:
+                        except (TypeError, GEOSException):
                             if isinstance(value, str):
                                 value = ast.literal_eval(value)
                             try:
