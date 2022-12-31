@@ -26,7 +26,7 @@ jobs:
           python-version: ${{ matrix.python }}
           cache: 'pip'
           cache-dependency-path: 'pyproject.toml'
-      - run: pip install tox
+      - run: pip install "tox>=4.0"
       - run: tox -e ${{ matrix.toxenv }}
   test:
     name: ${{ matrix.toxenv }} (Python ${{ matrix.python }}, ${{ matrix.os }})
