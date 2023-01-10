@@ -4,7 +4,7 @@ import sys
 import pytest
 
 from tests import REFERENCE_DIRECTORY
-from typepigeon import convert_value
+from typepigeon import to_type
 
 
 @pytest.mark.spatial
@@ -16,11 +16,13 @@ def test_convert_crs():
 
     reference_directory = REFERENCE_DIRECTORY / "test_convert_crs"
 
-    crs_1 = convert_value(CRS.from_epsg(4326), str)
-    crs_2 = convert_value(CRS.from_epsg(4326), int)
-    crs_3 = convert_value(CRS.from_epsg(4326), dict)
-    crs_4 = convert_value(CRS.from_epsg(4326), {})
-    crs_5 = convert_value(4326, CRS)
+    wgs84 = CRS.from_epsg(4326)
+
+    crs_1 = to_type(wgs84, str)
+    crs_2 = to_type(wgs84, int)
+    crs_3 = to_type(wgs84, dict)
+    crs_4 = to_type(wgs84, {})
+    crs_5 = to_type(4326, CRS)
 
     wkt_filename = reference_directory / "epsg4326.txt"
     json_filename = reference_directory / "epsg4326.json"
@@ -41,14 +43,14 @@ def test_convert_crs():
 def test_convert_geometry():
     from shapely.geometry import LineString, MultiPoint, Point, Polygon
 
-    geometry_1 = convert_value("[0, 1]", Point)
-    geometry_2 = convert_value((0, 1), Point)
-    geometry_3 = convert_value([(0, 1), (1, 1), (1, 0), (0, 0)], MultiPoint)
-    geometry_4 = convert_value([(0, 1), (1, 1), (1, 0), (0, 0)], LineString)
-    geometry_5 = convert_value([(0, 1), (1, 1), (1, 0), (0, 0)], Polygon)
+    geometry_1 = to_type("[0, 1]", Point)
+    geometry_2 = to_type((0, 1), Point)
+    geometry_3 = to_type([(0, 1), (1, 1), (1, 0), (0, 0)], MultiPoint)
+    geometry_4 = to_type([(0, 1), (1, 1), (1, 0), (0, 0)], LineString)
+    geometry_5 = to_type([(0, 1), (1, 1), (1, 0), (0, 0)], Polygon)
 
     with pytest.raises(TypeError):
-        convert_value(Point(0, 1), MultiPoint)
+        to_type(Point(0, 1), MultiPoint)
 
     assert geometry_1 == Point((0, 1))
     assert geometry_2 == Point((0, 1))

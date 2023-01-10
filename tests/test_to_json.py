@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 
-from typepigeon import convert_to_json
+from typepigeon import to_json
 
 
 class FloatTest:
@@ -32,26 +32,26 @@ class EnumerationTest(Enum):
 
 
 def test_convert_to_json():
-    result_1 = convert_to_json(5)
-    result_2 = convert_to_json("5")
+    result_1 = to_json(5)
+    result_2 = to_json("5")
 
-    result_3 = convert_to_json(FloatTest(5))
-    result_4 = convert_to_json(IntegerTest(5.0))
-    result_5 = convert_to_json(FloatTest(5.5))
+    result_3 = to_json(FloatTest(5))
+    result_4 = to_json(IntegerTest(5.0))
+    result_5 = to_json(FloatTest(5.5))
 
-    result_6 = convert_to_json("test")
-    result_7 = convert_to_json(datetime(2021, 3, 26))
+    result_6 = to_json("test")
+    result_7 = to_json(datetime(2021, 3, 26))
 
-    result_8 = convert_to_json(
-        convert_to_json([FloatTest(5), "6", {3: datetime(2021, 3, 27)}])
+    result_8 = to_json(
+        to_json([FloatTest(5), "6", {3: datetime(2021, 3, 27)}])
     )
-    result_9 = convert_to_json(
-        convert_to_json({"test": [FloatTest(5), "6", {3: datetime(2021, 3, 27)}]})
+    result_9 = to_json(
+        to_json({"test": [FloatTest(5), "6", {3: datetime(2021, 3, 27)}]})
     )
 
-    result_10 = convert_to_json(EnumerationTest.test_1)
+    result_10 = to_json(EnumerationTest.test_1)
 
-    result_11 = convert_to_json(Path("/path/test"))
+    result_11 = to_json(Path("/path/test"))
 
     assert result_1 == 5
     assert result_2 == "5"
