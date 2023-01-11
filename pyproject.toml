@@ -37,8 +37,24 @@ norecursedirs = [
 ]
 
 [tool.ruff]
-ignore = [
+line-length = 127
+select = ["ALL"]
+extend-ignore = [
+    # Ignored check groups
+    "C90", # mccabe complexity
+    "D", # pydocstyle
+    "ANN", # flake8-annotations
+    "FBT", # flake8-boolean-trap
+    "EM", # flake8-errmsg
+    "ARG", # flake8-unused-arguments
+    "DTZ", # flake8-datetimez
+    'UP006', # Use `list` instead of `List` for type annotations
+    # Individually ignored checks
+    "B905", # Requires python 3.10 (use zip strict)
     'E501', # Line too long
     'E722', # Do not use bare `except`
-    'F541', # f-string without any placeholders
+    "PT011", # `pytest.raises(...)` is too broad, set the `match` parameter or use a more specific exception
+    "Q000", # Single quotes found but double quotes preferred
+    "S101", # Use of `assert` detected
+    "UP007", # Use `X | Y` for type annotations
 ]

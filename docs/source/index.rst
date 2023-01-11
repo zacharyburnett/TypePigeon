@@ -4,6 +4,6 @@
    :hidden:
 
    readme
-   convert_value
-   convert_to_json
-   guard_generic_alias
+   to_type
+   to_json
+   subscripted_type
