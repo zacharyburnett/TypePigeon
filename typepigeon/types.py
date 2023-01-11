@@ -23,7 +23,9 @@ def subscripted_type(generic_alias: Any) -> type:
 
     """
 
-    if hasattr(generic_alias, '__origin__') and generic_alias.__origin__.__name__ == 'Union':
+    if hasattr(generic_alias, '__origin__') \
+            and ((hasattr(generic_alias.__origin__, '_name') and generic_alias.__origin__._name == 'Union') \
+                 or (hasattr(generic_alias.__origin__, '__name__') and generic_alias.__origin__.__name__ == 'Union')):
         raise NotImplementedError('Union subscription is not supported')
 
     if (
