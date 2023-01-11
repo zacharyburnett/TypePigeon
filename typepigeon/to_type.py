@@ -1,4 +1,5 @@
 import ast
+import contextlib
 import json
 import sys
 from datetime import date, datetime, time, timedelta
@@ -9,7 +10,7 @@ from typing import Any, Collection, Iterable, List, Mapping, Union
 from typepigeon.types import subscripted_type
 
 
-@lru_cache(maxsize=None)
+@lru_cache
 def installed_packages() -> List[str]:
     try:
         from importlib import metadata as importlib_metadata
@@ -81,7 +82,8 @@ def to_type(input_value: Any, output_type: Union[type, Collection[type]]) -> Any
         input_value = None
     elif output_type is Any:
         return input_value
-    elif isinstance(output_type, Collection):
+
+    if isinstance(output_type, Collection):
         collection_type = type(output_type)
         if collection_type is not EnumMeta:
             if not issubclass(collection_type, Mapping):
@@ -90,13 +92,13 @@ def to_type(input_value: Any, output_type: Union[type, Collection[type]]) -> Any
                     if not isinstance(input_value, Iterable) or isinstance(input_value, str):
                         try:
                             evaluated_value = ast.literal_eval(input_value)
-                            assert isinstance(evaluated_value, Collection)
+                            if not isinstance(evaluated_value, Collection):
+                                raise TypeError()
                             input_value = evaluated_value
                         except:
-                            if isinstance(input_value, str) and "," in input_value:
-                                input_value = [entry.strip() for entry in input_value.split(",")]
-                            else:
-                                input_value = [input_value]
+                            input_value = [entry.strip() for entry in input_value.split(",")] if isinstance(input_value,
+                                                                                                            str) and "," in input_value else [
+                                input_value]
                     if len(output_type) == 1:
                         output_type = [output_type[0] for _ in input_value]
                     elif len(output_type) == len(input_value):
@@ -120,10 +122,9 @@ def to_type(input_value: Any, output_type: Union[type, Collection[type]]) -> Any
                 converted_items = []
                 key_to_type = list(output_type)[0]
                 value_to_type = output_type[key_to_type]
-                for key, input_value in input_value.items():
+                for key, sub_value in input_value.items():
                     key = to_type(key, key_to_type)
-                    input_value = to_type(input_value, value_to_type)
-                    converted_items.append((key, input_value))
+                    converted_items.append((key, to_type(sub_value, value_to_type)))
                 input_value = collection_type(converted_items)
             elif "pyproj" in installed_packages():
                 from pyproj import CRS
@@ -136,10 +137,10 @@ def to_type(input_value: Any, output_type: Union[type, Collection[type]]) -> Any
             except (KeyError, ValueError):
                 try:
                     input_value = output_type(input_value)
-                except (KeyError, ValueError):
+                except (KeyError, ValueError) as error:
                     raise ValueError(
                         f'unrecognized entry "{input_value}"; must be one of {list(output_type)}'
-                    )
+                    ) from error
     elif type(input_value) is not output_type and input_value is not None:
         if isinstance(input_value, timedelta):
             if issubclass(output_type, str):
@@ -165,12 +166,10 @@ def to_type(input_value: Any, output_type: Union[type, Collection[type]]) -> Any
             except ValueError:
                 input_value = bool(input_value)
         elif issubclass(output_type, (datetime, date)):
-            try:
+            with contextlib.suppress(ModuleNotFoundError, TypeError):
                 from dateutil.parser import parse as parse_date
 
                 input_value = parse_date(input_value)
-            except (ModuleNotFoundError, TypeError):
-                pass
             if (
                     issubclass(output_type, datetime)
                     and isinstance(input_value, date)
@@ -197,9 +196,9 @@ def to_type(input_value: Any, output_type: Union[type, Collection[type]]) -> Any
                 input_value = timedelta(seconds=float(input_value))
         elif "shapely" in installed_packages():
             from shapely import wkb, wkt
+            from shapely.errors import GEOSException
             from shapely.geometry import shape as shapely_shape
             from shapely.geometry.base import GEOMETRY_TYPES
-            from shapely.errors import GEOSException
 
             if output_type.__name__ in GEOMETRY_TYPES:
                 try:

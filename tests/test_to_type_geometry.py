@@ -7,7 +7,7 @@ from tests import REFERENCE_DIRECTORY
 from typepigeon import to_type
 
 
-@pytest.mark.spatial
+@pytest.mark.spatial()
 @pytest.mark.skipif(
     sys.version_info < (3, 8), reason="mismatch in WKT strings in PROJ versions"
 )
@@ -39,7 +39,7 @@ def test_convert_crs():
     assert crs_5 == CRS.from_epsg(4326)
 
 
-@pytest.mark.spatial
+@pytest.mark.spatial()
 def test_convert_geometry():
     from shapely.geometry import LineString, MultiPoint, Point, Polygon
 

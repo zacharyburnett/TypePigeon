@@ -1,7 +1,7 @@
-from datetime import datetime # noqa: F401
+from datetime import datetime  # noqa: F401
 from enum import Enum
 from pathlib import Path
-from typing import Any, Union, Collection, Mapping
+from typing import Any, Collection, Mapping, Union
 
 from typepigeon.to_type import to_type
 
@@ -33,13 +33,7 @@ def to_json(input_value: Any) -> Union[str, float, int, dict, list, bool]:
         input_value = input_value.name
     if type(input_value) not in (float, int, bool, str):
         if isinstance(input_value, Collection) and not isinstance(input_value, str):
-            if isinstance(input_value, Mapping):
-                input_value = {
-                    to_json(key): to_json(entry)
-                    for key, entry in input_value.items()
-                }
-            else:
-                input_value = [to_json(entry) for entry in input_value]
+            input_value = {to_json(key): to_json(entry) for key, entry in input_value.items()} if isinstance(input_value, Mapping) else [to_json(entry) for entry in input_value]
         else:
             try:
                 input_value = to_type(input_value, float)

@@ -97,7 +97,8 @@ def test_convert_datetime():
     assert datetime_3 == date(2021, 3, 26)
     assert datetime_4 == datetime(2020, 11, 7, 9, 38, 16)
 
-    assert isinstance(datetime_3, date) and not isinstance(datetime_3, datetime)
+    assert isinstance(datetime_3, date)
+    assert not isinstance(datetime_3, datetime)
 
     assert date_1 == "2021-03-26"
     assert date_2 == date(2021, 3, 26)

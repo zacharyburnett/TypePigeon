@@ -1,5 +1,5 @@
 from enum import EnumMeta
-from typing import Collection, Mapping, Any
+from typing import Any, Collection, Mapping
 
 
 def subscripted_type(generic_alias: Any) -> type:
@@ -43,15 +43,10 @@ def subscripted_type(generic_alias: Any) -> type:
                 generic_alias, (EnumMeta, str)
         ):
             type_class = generic_alias.__class__
-            if issubclass(type_class, Mapping):
-                members = generic_alias.items()
-            else:
-                members = generic_alias
+            members = generic_alias.items() if issubclass(type_class, Mapping) else generic_alias
 
         members = [subscripted_type(member) for member in members]
         if type_class != generic_alias.__class__ or members != generic_alias:
             return type_class(members)
-        else:
-            return generic_alias
-    else:
         return generic_alias
+    return generic_alias

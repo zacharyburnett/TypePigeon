@@ -10,9 +10,9 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 import os
+import sys
 from os import PathLike
 from pathlib import Path
-import sys
 
 import tomli
 from dunamai import Version
@@ -27,8 +27,8 @@ def repository_root(path: PathLike = None) -> Path:
         path = path.parent
     if ".git" in (child.name for child in path.iterdir()) or path == path.parent:
         return path
-    else:
-        return repository_root(path.parent)
+
+    return repository_root(path.parent)
 
 
 sys.path.insert(0, str(repository_root()))
@@ -39,7 +39,7 @@ with open(Path(__file__).parent.parent.parent / 'pyproject.toml', 'rb') as confi
 
 project = metadata["name"]
 author = metadata["authors"][0]["name"]
-copyright = f"2021, {author}"
+copyright = f"2021, {author}" # noqa: A001
 
 # The full version, including alpha/beta/rc tags
 try:
