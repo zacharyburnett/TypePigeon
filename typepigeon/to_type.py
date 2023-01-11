@@ -96,9 +96,16 @@ def to_type(input_value: Any, output_type: Union[type, Collection[type]]) -> Any
                                 raise TypeError()
                             input_value = evaluated_value
                         except:
-                            input_value = [entry.strip() for entry in input_value.split(",")] if isinstance(input_value,
-                                                                                                            str) and "," in input_value else [
-                                input_value]
+                            if isinstance(input_value, str):
+                                if '\n' in input_value:
+                                    entries = input_value.splitlines()
+                                elif ',' in input_value:
+                                    entries = input_value.split(",")
+                                else:
+                                    entries = [input_value]
+                                input_value = [entry.strip() for entry in entries]
+                            else:
+                                input_value = [input_value]
                     if len(output_type) == 1:
                         output_type = [output_type[0] for _ in input_value]
                     elif len(output_type) == len(input_value):

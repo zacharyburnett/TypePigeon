@@ -3,7 +3,7 @@ from typing import Any
 
 import pytest
 
-from typepigeon.convert import to_type
+from typepigeon.to_type import to_type
 
 
 def test_convert_str():
