@@ -10,7 +10,7 @@ from typing import Any, Collection, Iterable, List, Mapping, Union
 from typepigeon.types import subscripted_type
 
 
-@lru_cache
+@lru_cache(maxsize=None)
 def installed_packages() -> List[str]:
     try:
         from importlib import metadata as importlib_metadata
