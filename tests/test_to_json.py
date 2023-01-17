@@ -43,10 +43,10 @@ def test_convert_to_json():
     result_7 = to_json(datetime(2021, 3, 26))
 
     result_8 = to_json(
-        to_json([FloatTest(5), "6", {3: datetime(2021, 3, 27)}])
+        to_json([FloatTest(5), "6", {3: datetime(2021, 3, 27)}]),
     )
     result_9 = to_json(
-        to_json({"test": [FloatTest(5), "6", {3: datetime(2021, 3, 27)}]})
+        to_json({"test": [FloatTest(5), "6", {3: datetime(2021, 3, 27)}]}),
     )
 
     result_10 = to_json(EnumerationTest.test_1)
