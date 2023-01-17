@@ -57,4 +57,5 @@ extend-ignore = [
     "Q000", # Single quotes found but double quotes preferred
     "S101", # Use of `assert` detected
     "UP007", # Use `X | Y` for type annotations
+    'UP011', # Unnecessary parameters to `functools.lru_cache`
 ]
