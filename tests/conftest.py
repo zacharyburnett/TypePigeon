@@ -7,7 +7,7 @@ def pytest_collection_modifyitems(config, items):
     if keywordexpr or markexpr:
         return  # let pytest handle this
 
-    skip_spatial = pytest.mark.skip(reason='spatial not selected')
+    skip_spatial = pytest.mark.skip(reason="spatial not selected")
     for item in items:
-        if 'spatial' in item.keywords:
+        if "spatial" in item.keywords:
             item.add_marker(skip_spatial)
