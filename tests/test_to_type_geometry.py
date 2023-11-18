@@ -29,7 +29,7 @@ def test_convert_crs():
     json_filename = reference_directory / "epsg4326.json"
 
     with open(wkt_filename) as wkt_file:
-        reference_crs_wkt = wkt_file.read()
+        reference_crs_wkt = wkt_file.read().strip()
     with open(json_filename) as json_file:
         reference_crs_json = json.load(json_file)
 
