@@ -3,8 +3,7 @@ from typing import Any, Collection, Mapping
 
 
 def subscripted_type(generic_alias: Any) -> type:
-    """
-    convert an instance of a subscripted ``typing._GenericAlias`` to a subscripted type
+    """Convert an instance of a subscripted ``typing._GenericAlias`` to a subscripted type.
 
     :param generic_alias: generic alias
     :return: simple type
@@ -22,16 +21,17 @@ def subscripted_type(generic_alias: Any) -> type:
     {str: ({int: str}, str)}
 
     """
-
-    if hasattr(generic_alias, '__origin__') \
-            and ((hasattr(generic_alias.__origin__, '__name__') and generic_alias.__origin__.__name__ == 'Union') \
-                 or (hasattr(generic_alias.__origin__, '_name') and generic_alias.__origin__._name == 'Union')):
-        raise NotImplementedError('Union subscription is not supported')
+    if hasattr(generic_alias, "__origin__") and (
+        (hasattr(generic_alias.__origin__, "__name__") and generic_alias.__origin__.__name__ == "Union")
+        or (hasattr(generic_alias.__origin__, "_name") and generic_alias.__origin__._name == "Union")
+    ):
+        msg = "Union subscription is not supported"
+        raise NotImplementedError(msg)
 
     if (
-            hasattr(generic_alias, "__origin__")
-            or isinstance(generic_alias, Collection)
-            and not isinstance(generic_alias, (EnumMeta, str))
+        hasattr(generic_alias, "__origin__")
+        or isinstance(generic_alias, Collection)
+        and not isinstance(generic_alias, (EnumMeta, str))
     ):
         if hasattr(generic_alias, "__origin__"):
             type_class = generic_alias.__origin__
@@ -41,9 +41,7 @@ def subscripted_type(generic_alias: Any) -> type:
                     members = [members]
             else:
                 members = ()
-        elif isinstance(generic_alias, Collection) and not isinstance(
-                generic_alias, (EnumMeta, str)
-        ):
+        elif isinstance(generic_alias, Collection) and not isinstance(generic_alias, (EnumMeta, str)):
             type_class = generic_alias.__class__
             members = generic_alias.items() if issubclass(type_class, Mapping) else generic_alias
 

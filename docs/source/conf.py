@@ -34,12 +34,12 @@ def repository_root(path: PathLike = None) -> Path:
 sys.path.insert(0, str(repository_root()))
 
 # -- Project information -----------------------------------------------------
-with open(Path(__file__).parent.parent.parent / 'pyproject.toml', 'rb') as configuration_file:
-    metadata = tomli.load(configuration_file)['project']
+with open(Path(__file__).parent.parent.parent / "pyproject.toml", "rb") as configuration_file:
+    metadata = tomli.load(configuration_file)["project"]
 
 project = metadata["name"]
 author = metadata["authors"][0]["name"]
-copyright = f"2021, {author}" # noqa: A001
+copyright = f"2021, {author}"  # noqa: A001
 
 # The full version, including alpha/beta/rc tags
 try:

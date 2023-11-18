@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import ast
 import contextlib
 import json
@@ -5,13 +7,13 @@ import sys
 from datetime import date, datetime, time, timedelta
 from enum import Enum, EnumMeta
 from functools import lru_cache
-from typing import Any, Collection, Iterable, List, Mapping, Union
+from typing import Any, Collection, Iterable, Mapping
 
 from typepigeon.types import subscripted_type
 
 
 @lru_cache(maxsize=None)
-def installed_packages() -> List[str]:
+def installed_packages() -> list[str]:
     try:
         from importlib import metadata as importlib_metadata
     except ImportError:  # for Python<3.8
@@ -24,9 +26,8 @@ def installed_packages() -> List[str]:
     ]
 
 
-def to_type(input_value: Any, output_type: Union[type, Collection[type]]) -> Any:
-    """
-    convert a value to the specified type
+def to_type(input_value: Any, output_type: type | Collection[type]) -> Any:
+    """Convert a value to the specified type.
 
     :param input_value: Python value
     :param output_type: type to convert to
@@ -69,7 +70,6 @@ def to_type(input_value: Any, output_type: Union[type, Collection[type]]) -> Any
     >>> to_type(4326, CRS)
     CRS.from_epsg(4326)
     """
-
     if isinstance(output_type, str):
         output_type = getattr(sys.modules["builtins"], output_type)
 
@@ -93,13 +93,13 @@ def to_type(input_value: Any, output_type: Union[type, Collection[type]]) -> Any
                         try:
                             evaluated_value = ast.literal_eval(input_value)
                             if not isinstance(evaluated_value, Collection):
-                                raise TypeError()
+                                raise TypeError
                             input_value = evaluated_value
                         except:
                             if isinstance(input_value, str):
-                                if '\n' in input_value:
+                                if "\n" in input_value:
                                     entries = input_value.splitlines()
-                                elif ',' in input_value:
+                                elif "," in input_value:
                                     entries = input_value.split(",")
                                 else:
                                     entries = [input_value]
@@ -111,14 +111,10 @@ def to_type(input_value: Any, output_type: Union[type, Collection[type]]) -> Any
                     elif len(output_type) == len(input_value):
                         output_type = output_type[: len(input_value)]
                     else:
-                        raise ValueError(
-                            f"unable to convert list of values of length {len(input_value)} "
-                            f"to list of types of length {len(output_type)}: "
-                            f"{input_value} -/> {output_type}"
-                        )
+                        msg = f"unable to convert list of values of length {len(input_value)} to list of types of length {len(output_type)}: {input_value} -/> {output_type}"
+                        raise ValueError(msg)
                     input_value = collection_type(
-                        to_type(input_value[index], current_type)
-                        for index, current_type in enumerate(output_type)
+                        to_type(input_value[index], current_type) for index, current_type in enumerate(output_type)
                     )
                 else:
                     input_value = collection_type()
@@ -127,7 +123,7 @@ def to_type(input_value: Any, output_type: Union[type, Collection[type]]) -> Any
 
             elif isinstance(input_value, Mapping):
                 converted_items = []
-                key_to_type = list(output_type)[0]
+                key_to_type = next(iter(output_type))
                 value_to_type = output_type[key_to_type]
                 for key, sub_value in input_value.items():
                     key = to_type(key, key_to_type)
@@ -145,9 +141,8 @@ def to_type(input_value: Any, output_type: Union[type, Collection[type]]) -> Any
                 try:
                     input_value = output_type(input_value)
                 except (KeyError, ValueError) as error:
-                    raise ValueError(
-                        f'unrecognized entry "{input_value}"; must be one of {list(output_type)}'
-                    ) from error
+                    msg = f'unrecognized entry "{input_value}"; must be one of {list(output_type)}'
+                    raise ValueError(msg) from error
     elif type(input_value) is not output_type and input_value is not None:
         if isinstance(input_value, timedelta):
             if issubclass(output_type, str):
@@ -177,11 +172,7 @@ def to_type(input_value: Any, output_type: Union[type, Collection[type]]) -> Any
                 from dateutil.parser import parse as parse_date
 
                 input_value = parse_date(input_value)
-            if (
-                    issubclass(output_type, datetime)
-                    and isinstance(input_value, date)
-                    and not isinstance(input_value, datetime)
-            ):
+            if issubclass(output_type, datetime) and isinstance(input_value, date) and not isinstance(input_value, datetime):
                 input_value = datetime.combine(input_value, time(0, 0, 0))
             elif issubclass(output_type, date) and not issubclass(output_type, datetime):
                 input_value = input_value.date()
@@ -190,7 +181,8 @@ def to_type(input_value: Any, output_type: Union[type, Collection[type]]) -> Any
             if isinstance(input_value, str) and ":" in input_value:
                 parts = [float(part) for part in input_value.split(":")]
                 if len(parts) > 4:
-                    raise ValueError(f'unable to parse timedelta from input "{input_value}"')
+                    msg = f'unable to parse timedelta from input "{input_value}"'
+                    raise ValueError(msg)
                 components = {}
                 if len(parts) > 3:
                     components["days"] = parts.pop(0)

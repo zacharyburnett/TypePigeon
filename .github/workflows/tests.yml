@@ -28,4 +28,3 @@ jobs:
           coverage: 'codecov'
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-

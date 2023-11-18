@@ -9,7 +9,8 @@ from typepigeon import to_type
 
 @pytest.mark.spatial()
 @pytest.mark.skipif(
-    sys.version_info < (3, 8), reason="mismatch in WKT strings in PROJ versions",
+    sys.version_info < (3, 8),
+    reason="mismatch in WKT strings in PROJ versions",
 )
 def test_convert_crs():
     from pyproj import CRS
