@@ -23,6 +23,7 @@ jobs:
         - linux: py311-parallel
         - linux: py311-spatial-parallel
         - linux: py3-parallel
+        - macos: py3-parallel
         - linux: py3-spatial-parallel
         - linux: py3-spatial-cov-parallel
           coverage: 'codecov'
