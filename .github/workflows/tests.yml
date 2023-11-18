@@ -16,15 +16,15 @@ jobs:
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@v1
     with:
       envs: |
-        - linux: py39-xdist
-        - linux: py39-spatial-xdist
-        - linux: py310-xdist
-        - linux: py310-spatial-xdist
-        - linux: py311-xdist
-        - linux: py311-spatial-xdist
-        - linux: py3-xdist
-        - linux: py3-spatial-xdist
-        - linux: py3-spatial-cov-xdist
+        - linux: py39-parallel
+        - linux: py39-spatial-parallel
+        - linux: py310-parallel
+        - linux: py310-spatial-parallel
+        - linux: py311-parallel
+        - linux: py311-spatial-parallel
+        - linux: py3-parallel
+        - linux: py3-spatial-parallel
+        - linux: py3-spatial-cov-parallel
           coverage: 'codecov'
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
