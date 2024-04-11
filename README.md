@@ -17,16 +17,16 @@ pip install typepigeon
 
 ## Features
 
-- convert values directly from one Python type to another with `convert_value()`
-- convert values to JSON format with `convert_to_json()`
+- convert values directly from one Python type to another with `to_type()`
+- convert values to JSON format with `to_json()`
 - convert generic aliases (`List[str]`) to simple collection types (`[str]`)
-  with `guard_generic_alias()`
+  with `subscripted_type()`
 
 ## Usage
 
 With TypePigeon, you can convert simple values from one type to another:
 
-### `convert_value()`
+### `to_type()`
 
 ```python
 import typepigeon
@@ -89,7 +89,7 @@ typepigeon.to_type(4326, CRS)
 CRS.from_epsg(4326)
 ```
 
-### `convert_to_json()`
+### `to_json()`
 
 ```python
 from datetime import datetime
@@ -112,7 +112,7 @@ typepigeon.to_json({'test': [5, '6', {3: datetime(2021, 3, 27)}]})
 {'test': [5, '6', {3: '2021-03-27 00:00:00'}]}
 ```
 
-### `guard_generic_alias()`
+### `subscripted_type()`
 
 ```python
 import typepigeon.types
