@@ -1,0 +1,13 @@
+image: alpine/edge
+
+packages:
+    - python3
+    - py3-build
+
+sources:
+    - https://git.sr.ht/~hildebrind/typepigeon
+
+tasks:
+    - build: |
+        cd typepigeon
+        python3 -m build

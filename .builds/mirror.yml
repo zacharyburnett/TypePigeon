@@ -1,0 +1,19 @@
+image: alpine/edge
+
+secrets:
+  - fcc794e1-c264-491a-9089-a48031fa950f
+
+sources:
+  - git+ssh://git@git.sr.ht/~hildebrind/typepigeon
+
+tasks:
+  - check: |
+      cd typepigeon
+      if [ "$(git rev-parse origin/main)" != "$(git rev-parse HEAD)" ]; then \
+        complete-build; \
+      fi
+  - mirror: |
+      cd typepigeon
+      git remote add github git@github.com:zacharyburnett/typepigeon.git
+      ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+      git push github main
