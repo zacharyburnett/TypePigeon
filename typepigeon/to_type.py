@@ -119,7 +119,7 @@ def to_type(input_value: Any, output_type: type | Collection[type]) -> Any:
                 else:
                     input_value = collection_type()
             elif isinstance(input_value, str):
-                input_value = json.loads(input_value)
+                input_value = json.loads(input_value.replace("'", '"'))
 
             elif isinstance(input_value, Mapping):
                 converted_items = []
